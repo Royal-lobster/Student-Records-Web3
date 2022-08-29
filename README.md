@@ -8,7 +8,7 @@ Securing and issuing academic transcripts is one of the most mind-numbing tasks 
 
 This project is a web application that allows the user to store and retrieve student records. The user can also search for a student record by roll number. The records can contain student grades, achievements and other information which can be conveniently entered via web application and the same data is be fetched and displayed in a web page.
 
-# Get Started
+## Get Started
 
 Try running some of the following tasks:
 
