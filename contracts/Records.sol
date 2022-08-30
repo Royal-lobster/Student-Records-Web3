@@ -174,6 +174,7 @@ contract Records {
         );
         delete _records[_recordId];
         delete _entries[_recordId];
+        _recordsLength--;
     }
 
     /*

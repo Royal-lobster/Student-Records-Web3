@@ -116,11 +116,11 @@ describe("Records Contract", function () {
       },
     ];
 
-    for (let i = 0; i < additionalRecordData.length; i++) {
+    for (const recordData of additionalRecordData) {
       await (
         await DeployedRecordsContract.addRecord(
-          additionalRecordData[i].name,
-          additionalRecordData[i].description
+          recordData.name,
+          recordData.description
         )
       ).wait();
     }
@@ -128,5 +128,14 @@ describe("Records Contract", function () {
     const recordCount = await DeployedRecordsContract._recordsLength();
 
     expect(recordCount).to.equal(additionalRecordData.length + 1);
+  });
+
+  it("Should be able to delete record and reduce _recordsLength", async function () {
+    const { DeployedRecordsContract } = await loadFixture(add0thRecordFixture);
+    await (await DeployedRecordsContract.deleteRecord(0)).wait();
+    const recordCount = await DeployedRecordsContract._recordsLength();
+    const recordReadTx = await DeployedRecordsContract.getRecord(0);
+    expect(recordCount).to.equal(0);
+    expect(recordReadTx.name).to.equal("");
   });
 });
