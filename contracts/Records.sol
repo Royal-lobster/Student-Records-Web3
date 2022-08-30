@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity >=0.7.3;
-import "hardhat/console.sol";
 
 contract Records {
     struct Record {
@@ -26,25 +25,14 @@ contract Records {
      * @param _name The name of the record.
      * @param _description The description of the record.
      * @param _maintainer The address of the maintainer of the record.
-     * @return The id of the new record.
      */
-    function addRecord(string memory _name, string memory _description)
-        public
-        returns (uint)
-    {
+    function addRecord(string memory _name, string memory _description) public {
         _records[_recordsLength] = Record({
             name: _name,
             description: _description,
             maintainer: msg.sender
         });
         _recordsLength++;
-
-        console.log("================ADD_RECORD================");
-        console.log("RECORD ID: ", _recordsLength - 1);
-        console.log("=> NAME: ", _name);
-        console.log("=> DESCRIPTION: ", _description);
-        console.log("=> MAINTAINER: ", msg.sender);
-        return _recordsLength - 1;
     }
 
     /*
@@ -52,7 +40,6 @@ contract Records {
      * @param _recordId The id of the record.
      * @param _recipient The address of the recipient of the record.
      * @param _ipfs_data The IPFS hash of the data.
-     * @return The id of the new entry.
      */
     function addEntry(
         uint _recordId,
@@ -70,13 +57,6 @@ contract Records {
                 ipfs_data: _ipfs_data
             })
         );
-        console.log("=================ADD_ENTRY=================");
-        console.log("RECORD ID: ", _recordId);
-        console.log("=> MAINTAINER: ", _records[_recordId].maintainer);
-        console.log("=> ADDRESS: ", msg.sender);
-        console.log("ENTRY ID: ", _entries[_recordId].length - 1);
-        console.log("=> RECIPIENT: ", _recipient);
-        console.log("=> IPFS DATA: ", _ipfs_data);
     }
 
     /*
@@ -85,12 +65,6 @@ contract Records {
      * @param _entryId The id of the entry.
      */
     function acknowledgeEntry(uint _recordId, uint _entryId) public {
-        console.log("=================ACK_ENTRY=================");
-        console.log("RECORD ID: ", _recordId);
-        console.log("ENTRY ID: ", _entryId);
-        console.log("=> RECIPIENT: ", _entries[_recordId][_entryId].recipient);
-        console.log("=> ADDRESS: ", msg.sender);
-
         require(
             _entries[_recordId][_entryId].recipient == msg.sender,
             "Only the recipient can acknowledge an entry."
@@ -113,10 +87,6 @@ contract Records {
      * @return The record.
      */
     function getRecord(uint _recordId) public view returns (Record memory) {
-        console.log("=================ADD_ENTRY=================");
-        console.log("RECORD ID: ", _recordId);
-        console.log("=> MAINTAINER: ", _records[_recordId].maintainer);
-        console.log("=> ADDRESS: ", msg.sender);
         return _records[_recordId];
     }
 
@@ -131,21 +101,6 @@ contract Records {
         view
         returns (Entry memory)
     {
-        console.log("=================GET_ENTRY=================");
-        console.log("RECORD ID: ", _recordId);
-        console.log("ENTRY ID: ", _entryId);
-        console.log(
-            "ENTRY RECIPIENT: ",
-            _entries[_recordId][_entryId].recipient
-        );
-        console.log(
-            "ENTRY ACKNOWLEDGED: ",
-            _entries[_recordId][_entryId].acknowledged
-        );
-        console.log(
-            "ENTRY IPFS DATA: ",
-            _entries[_recordId][_entryId].ipfs_data
-        );
         return _entries[_recordId][_entryId];
     }
 }
