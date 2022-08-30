@@ -1,6 +1,6 @@
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
-import { ethers, network } from "hardhat";
+import { ethers } from "hardhat";
 
 describe("Records Contract", function () {
   const firstRecordData = {
@@ -93,7 +93,7 @@ describe("Records Contract", function () {
   });
 
   it("Should allow adding multiple records and show counts", async function () {
-    const { DeployedRecordsContract, addr1, addr2 } = await loadFixture(
+    const { DeployedRecordsContract } = await loadFixture(
       add0thEntryTo0thRecordFixture
     );
     const additionalRecordData = [
@@ -140,5 +140,75 @@ describe("Records Contract", function () {
     const recordReadTx = await DeployedRecordsContract.getRecord(0);
     expect(recordCount).to.equal(0);
     expect(recordReadTx.name).to.equal("");
+  });
+
+  it("Should be able to update record name and description", async function () {
+    const { DeployedRecordsContract } = await loadFixture(add0thRecordFixture);
+    const newRecordData = {
+      name: "Workshop Grades for Local Metrics Examination",
+      description:
+        "Grades for Local Metrics Examination for all the students who took the exam",
+    };
+    await (
+      await DeployedRecordsContract.updateRecordDetails(
+        0,
+        newRecordData.name,
+        newRecordData.description
+      )
+    ).wait();
+    const recordReadTx = await DeployedRecordsContract.getRecord(0);
+    expect(recordReadTx.name).to.equal(newRecordData.name);
+    expect(recordReadTx.description).to.equal(newRecordData.description);
+  });
+
+  it("Should be able to update record maintainer", async function () {
+    const { DeployedRecordsContract, addr3 } = await loadFixture(
+      add0thRecordFixture
+    );
+    await (
+      await DeployedRecordsContract.updateRecordMaintainer(0, addr3.address)
+    ).wait();
+    const recordReadTx = await DeployedRecordsContract.getRecord(0);
+    expect(recordReadTx.maintainer).to.equal(addr3.address);
+  });
+
+  it("Should be able to update entry", async function () {
+    const { DeployedRecordsContract, addr2 } =
+      await add0thEntryTo0thRecordFixture();
+    const newEntryData = {
+      recipient: addr2.address,
+      ipfsHash: "SOME_OTHER_IPFS_HASH",
+    };
+    await (
+      await DeployedRecordsContract.updateEntry(
+        0,
+        0,
+        newEntryData.recipient,
+        newEntryData.ipfsHash
+      )
+    ).wait();
+    const entryReadTx = await DeployedRecordsContract.getEntry(0, 0);
+    expect(entryReadTx.recipient).to.equal(newEntryData.recipient);
+    expect(entryReadTx.ipfs_data).to.equal(newEntryData.ipfsHash);
+  });
+
+  it("Should'nt be able to update entry if recipient acknowledge it", async function () {
+    const { DeployedRecordsContract, addr1, addr2 } =
+      await add0thEntryTo0thRecordFixture();
+    await (
+      await DeployedRecordsContract.connect(addr1).acknowledgeEntry(0, 0)
+    ).wait();
+    const newEntryData = {
+      recipient: addr2.address,
+      ipfsHash: "SOME_OTHER_IPFS_HASH",
+    };
+    await expect(
+      DeployedRecordsContract.updateEntry(
+        0,
+        0,
+        newEntryData.recipient,
+        newEntryData.ipfsHash
+      )
+    ).to.be.revertedWith("Entry already acknowledged.");
   });
 });

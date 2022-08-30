@@ -157,7 +157,7 @@ contract Records {
         );
         require(
             !_entries[_recordId][_entryId].acknowledged,
-            "Only the unacknowledged entry can be updated."
+            "Entry already acknowledged."
         );
         _entries[_recordId][_entryId].recipient = _recipient;
         _entries[_recordId][_entryId].ipfs_data = _ipfs_data;
