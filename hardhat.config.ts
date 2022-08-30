@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
-
+import "solidity-coverage";
 dotenv.config();
 
 const RPC_URL = process.env.ALCHEMY_RPC_URL;
