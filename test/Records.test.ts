@@ -10,7 +10,6 @@ describe("Records Contract", function () {
   };
 
   async function deployTokenFixture() {
-    await network.provider.send("hardhat_reset");
     const [owner, addr1, addr2, addr3] = await ethers.getSigners();
     const RecordsContract = await ethers.getContractFactory("Records");
     const DeployedRecordsContract = await RecordsContract.deploy();
@@ -27,7 +26,7 @@ describe("Records Contract", function () {
 
   async function add0thRecordFixture() {
     const { DeployedRecordsContract, owner, addr1, addr2, addr3 } =
-      await loadFixture(deployTokenFixture);
+      await deployTokenFixture();
     await (
       await DeployedRecordsContract.addRecord(
         firstRecordData.name,
@@ -39,7 +38,7 @@ describe("Records Contract", function () {
 
   async function add0thEntryTo0thRecordFixture() {
     const { DeployedRecordsContract, owner, addr1, addr2, addr3 } =
-      await loadFixture(add0thRecordFixture);
+      await add0thRecordFixture();
     await (
       await DeployedRecordsContract.addEntry(0, addr1.address, "SOME_IPFS_HASH")
     ).wait();
@@ -80,7 +79,6 @@ describe("Records Contract", function () {
       { recipient: addr2.address, ipfsHash: "SOME_IPFS_HASH" },
       { recipient: addr3.address, ipfsHash: "SOME_IPFS_HASH" },
     ];
-
     for (const entryData of additionalEntriesData) {
       await (
         await DeployedRecordsContract.addEntry(
@@ -90,7 +88,6 @@ describe("Records Contract", function () {
         )
       ).wait();
     }
-
     const entryCount = await DeployedRecordsContract.getEntryCount(0);
     expect(entryCount).to.equal(3);
   });
@@ -115,7 +112,6 @@ describe("Records Contract", function () {
         description: "Grades for Second Year Students for all the students",
       },
     ];
-
     for (const recordData of additionalRecordData) {
       await (
         await DeployedRecordsContract.addRecord(
@@ -124,10 +120,17 @@ describe("Records Contract", function () {
         )
       ).wait();
     }
-
     const recordCount = await DeployedRecordsContract._recordsLength();
-
     expect(recordCount).to.equal(additionalRecordData.length + 1);
+  });
+
+  it("Should be able to delete entry of record", async function () {
+    const { DeployedRecordsContract } = await loadFixture(
+      add0thEntryTo0thRecordFixture
+    );
+    await (await DeployedRecordsContract.deleteEntry(0, 0)).wait();
+    const entry = await DeployedRecordsContract.getEntry(0, 0);
+    expect(entry.recipient).to.equal(ethers.constants.AddressZero);
   });
 
   it("Should be able to delete record and reduce _recordsLength", async function () {

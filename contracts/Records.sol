@@ -184,8 +184,8 @@ contract Records {
      */
     function deleteEntry(uint _recordId, uint _entryId) public {
         require(
-            _entries[_recordId][_entryId].recipient == msg.sender,
-            "Only the recipient can delete an entry."
+            _records[_recordId].maintainer == msg.sender,
+            "Only the maintainer can delete a record."
         );
         delete _entries[_recordId][_entryId];
     }
