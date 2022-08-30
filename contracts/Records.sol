@@ -103,4 +103,89 @@ contract Records {
     {
         return _entries[_recordId][_entryId];
     }
+
+    /*
+     * @dev Update name of a record.
+     * @param _recordId The id of the record.
+     * @param _name The new name of the record.
+     * @param _description The new description of the record.
+     */
+    function updateRecordDetails(
+        uint _recordId,
+        string memory _name,
+        string memory _description
+    ) public {
+        require(
+            _records[_recordId].maintainer == msg.sender,
+            "Only the maintainer can update the name of a record."
+        );
+        _records[_recordId].name = _name;
+        _records[_recordId].description = _description;
+    }
+
+    /*
+     * @dev Update the maintainer of a record.
+     * @param _recordId The id of the record.
+     * @param _maintainer The new maintainer of the record.
+     */
+    function updateRecordMaintainer(uint _recordId, address _maintainer)
+        public
+    {
+        require(
+            _records[_recordId].maintainer == msg.sender,
+            "Only the maintainer can update the maintainer of a record."
+        );
+        _records[_recordId].maintainer = _maintainer;
+    }
+
+    /*
+     * @dev Update entry of a record.
+     * @param _recordId The id of the record.
+     * @param _entryId The id of the entry.
+     * @param _recipient The new recipient of the entry.
+     * @param _ipfs_data The new IPFS hash of the data.
+     */
+    function updateEntry(
+        uint _recordId,
+        uint _entryId,
+        address _recipient,
+        string memory _ipfs_data
+    ) public {
+        require(
+            _records[_recordId].maintainer == msg.sender,
+            "Only the maintainer can update the maintainer of a record."
+        );
+        require(
+            !_entries[_recordId][_entryId].acknowledged,
+            "Only the unacknowledged entry can be updated."
+        );
+        _entries[_recordId][_entryId].recipient = _recipient;
+        _entries[_recordId][_entryId].ipfs_data = _ipfs_data;
+    }
+
+    /*
+     * @dev Delete a record.
+     * @param _recordId The id of the record.
+     */
+    function deleteRecord(uint _recordId) public {
+        require(
+            _records[_recordId].maintainer == msg.sender,
+            "Only the maintainer can delete a record."
+        );
+        delete _records[_recordId];
+        delete _entries[_recordId];
+    }
+
+    /*
+     * @dev Delete an entry.
+     * @param _recordId The id of the record.
+     * @param _entryId The id of the entry.
+     */
+    function deleteEntry(uint _recordId, uint _entryId) public {
+        require(
+            _entries[_recordId][_entryId].recipient == msg.sender,
+            "Only the recipient can delete an entry."
+        );
+        delete _entries[_recordId][_entryId];
+    }
 }
