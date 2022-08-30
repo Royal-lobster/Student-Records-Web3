@@ -117,7 +117,7 @@ contract Records {
     ) public {
         require(
             _records[_recordId].maintainer == msg.sender,
-            "Only the maintainer can update the name of a record."
+            "Only the maintainer can update the details of a record."
         );
         _records[_recordId].name = _name;
         _records[_recordId].description = _description;
@@ -153,7 +153,7 @@ contract Records {
     ) public {
         require(
             _records[_recordId].maintainer == msg.sender,
-            "Only the maintainer can update the maintainer of a record."
+            "Only the maintainer can update the entries of a record."
         );
         require(
             !_entries[_recordId][_entryId].acknowledged,
@@ -185,7 +185,7 @@ contract Records {
     function deleteEntry(uint _recordId, uint _entryId) public {
         require(
             _records[_recordId].maintainer == msg.sender,
-            "Only the maintainer can delete a record."
+            "Only the maintainer can delete entries from a record."
         );
         delete _entries[_recordId][_entryId];
     }

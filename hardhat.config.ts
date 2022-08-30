@@ -1,11 +1,11 @@
-import dotenv from "dotenv";
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "solidity-coverage";
-dotenv.config();
+import dotenv from "dotenv";
+dotenv.config({ path: __dirname + "/.env" });
 
 const RPC_URL = process.env.ALCHEMY_RPC_URL;
-const PRIVATE_KEY = process.env.ALCHEMY_PRIVATE_KEY;
+const PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 
 const config: HardhatUserConfig = {
   solidity: "0.8.9",
