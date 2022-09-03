@@ -9,6 +9,13 @@ contract Records {
         address maintainer;
     }
 
+    struct RecordWithId {
+        uint256 id;
+        string name;
+        string description;
+        address maintainer;
+    }
+
     struct Entry {
         address recipient;
         bool acknowledged;
@@ -17,6 +24,7 @@ contract Records {
 
     mapping(uint => Record) _records;
     mapping(uint => Entry[]) _entries;
+    mapping(address => uint[]) _maintainer_records;
 
     uint public _recordsLength = 0;
 
@@ -32,6 +40,7 @@ contract Records {
             description: _description,
             maintainer: msg.sender
         });
+        _maintainer_records[msg.sender].push(_recordsLength);
         _recordsLength++;
     }
 
@@ -79,6 +88,33 @@ contract Records {
      */
     function getEntryCount(uint _recordId) public view returns (uint) {
         return _entries[_recordId].length;
+    }
+
+    /*
+     * @dev Get list of records a maintainer has.
+     * @param _maintainer The address of the maintainer.
+     * @return The list of records the maintainer has.
+     */
+
+    function getRecordsByMaintainer(address _maintainer)
+        public
+        view
+        returns (RecordWithId[] memory)
+    {
+        RecordWithId[] memory records = new RecordWithId[](
+            _maintainer_records[_maintainer].length
+        );
+        for (uint i = 0; i < _maintainer_records[_maintainer].length; i++) {
+            records[i] = RecordWithId({
+                id: _maintainer_records[_maintainer][i],
+                name: _records[_maintainer_records[_maintainer][i]].name,
+                description: _records[_maintainer_records[_maintainer][i]]
+                    .description,
+                maintainer: _records[_maintainer_records[_maintainer][i]]
+                    .maintainer
+            });
+        }
+        return records;
     }
 
     /*

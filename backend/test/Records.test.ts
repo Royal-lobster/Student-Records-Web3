@@ -146,6 +146,42 @@ describe("Records Contract", function () {
     expect(recordCount).to.equal(additionalRecordData.length + 1);
   });
 
+  it("Should show all records by maintainer address", async function () {
+    const { DeployedRecordsContract, owner } = await loadFixture(
+      deployTokenFixture
+    );
+    const additionalRecordData = [
+      {
+        name: "Student Attendance for Central Metrics Examination",
+        description:
+          "Attendance for Central Metrics Examination for all the students who took the exam",
+      },
+      {
+        name: "Grades for First Year Students",
+        description:
+          "Grades for First Year Students for all the students who took the exam",
+      },
+      {
+        name: "Grades for Second Year Students",
+        description: "Grades for Second Year Students for all the students",
+      },
+    ];
+    for (const recordData of additionalRecordData) {
+      await (
+        await DeployedRecordsContract.addRecord(
+          recordData.name,
+          recordData.description
+        )
+      ).wait();
+    }
+    const maintainerRecords =
+      await DeployedRecordsContract.getRecordsByMaintainer(owner.address);
+
+    for (let i = 0; i < maintainerRecords.length; i++) {
+      expect(maintainerRecords[i].name).to.equal(additionalRecordData[i].name);
+    }
+  });
+
   it("Should be able to delete entry of record", async function () {
     const { DeployedRecordsContract } = await loadFixture(
       add0thEntryTo0thRecordFixture
