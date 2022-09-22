@@ -10,7 +10,9 @@
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.2",
+    "@tsconfig/svelte": "^3.0.0",
     "svelte": "^3.49.0",
+    "svelte-headless-table": "^0.14.2",
     "vite": "^3.1.0"
   }
 }

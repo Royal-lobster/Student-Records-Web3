@@ -34,6 +34,11 @@
     magic-string "^0.26.3"
     svelte-hmr "^0.15.0"
 
+"@tsconfig/svelte@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@tsconfig/svelte/-/svelte-3.0.0.tgz#b06e059209f04c414de0069f2f0e2796d979fc6f"
+  integrity sha512-pYrtLtOwku/7r1i9AMONsJMVYAtk3hzOfiGNekhtq5tYBGA7unMve8RvUclKLMT3PrihvJqUmzsRGh0RP84hKg==
+
 debug@^4.3.4:
   version "4.3.4"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.4.tgz#1319f6579357f2338d3337d2cdd4914bb5dcc865"
@@ -287,10 +292,28 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.yarnpkg.com/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
+svelte-headless-table@^0.14.2:
+  version "0.14.2"
+  resolved "https://registry.yarnpkg.com/svelte-headless-table/-/svelte-headless-table-0.14.2.tgz#7874168648d68b86cc12d1e2b0ac7e70a0c21368"
+  integrity sha512-tOrjTEFAL6xoC/ubEfeEJdj6d5ExXOVQaoKkyqADaX4kA8tFbKY4CQWYdui0MjltMgK6ERJcoJJYCIZWgW+uDg==
+  dependencies:
+    svelte-keyed "^1.1.5"
+    svelte-subscribe "^1.0.4"
+
 svelte-hmr@^0.15.0:
   version "0.15.0"
   resolved "https://registry.yarnpkg.com/svelte-hmr/-/svelte-hmr-0.15.0.tgz#c8304b5dd33f006415329d91470761d19417a324"
   integrity sha512-Aw21SsyoohyVn4yiKXWPNCSW2DQNH/76kvUnE9kpt4h9hcg9tfyQc6xshx9hzgMfGF0kVx0EGD8oBMWSnATeOg==
+
+svelte-keyed@^1.1.5:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/svelte-keyed/-/svelte-keyed-1.1.6.tgz#2ba4f2ecf56a46e7e86eaa1c1585d0807661dd58"
+  integrity sha512-sd/7j3waSpOkeiQqATstlvNySbEpSs49aoaZ/nc09x/iEndnXQ/9Zy5PTD06+C7hlZk8KjZ4bhrktAQ791jWMQ==
+
+svelte-subscribe@^1.0.4:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/svelte-subscribe/-/svelte-subscribe-1.0.5.tgz#fce0e0a11c0e64b561f95f8af99133887821f46e"
+  integrity sha512-p+vRSBVzR9BQC72mjd2eqCv8zx5euLZQJF7QqAw5d41aKzQVOq90y71/NXch+nDNMjWbRo0CX+brcWYgPryJlw==
 
 svelte@^3.49.0:
   version "3.50.1"
