@@ -32,7 +32,6 @@ contract Records {
      * @dev Create a new record.
      * @param _name The name of the record.
      * @param _description The description of the record.
-     * @param _maintainer The address of the maintainer of the record.
      */
     function addRecord(string memory _name, string memory _description) public {
         _records[_recordsLength] = Record({
