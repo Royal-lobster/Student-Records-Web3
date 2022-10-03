@@ -1,5 +1,7 @@
 <script lang="ts">
-    import "../app.css";
+	import '../app.css';
 </script>
 
-<slot />
+<div class="max-w-7xl mx-auto px-5">
+	<slot />
+</div>

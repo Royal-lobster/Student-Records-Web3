@@ -9,23 +9,22 @@
 		chainId
 	} from 'svelte-ethers-store';
 
-    const urlParams = new URLSearchParams(window.location.search);
+	const urlParams = new URLSearchParams(window.location.search);
 	const redirectPath = urlParams.get('redirect');
-    let redirectProgress = 0;
+	let redirectProgress = 0;
 
+	const incrementRedirectProgress = async () => {
+		for (let i = 0; i < 100; i++) {
+			redirectProgress = i;
+			await new Promise((resolve) => setTimeout(resolve, 20));
+		}
+	};
 	const handleRedirect = async () => {
-		
-        const incrementRedirectProgress = async () => {
-            for (let i = 0; i < 100; i++) {
-                redirectProgress = i;
-                await new Promise((resolve) => setTimeout(resolve, 20));
-            }
-        }
-       await incrementRedirectProgress();
+		await incrementRedirectProgress();
 		if (redirectPath) goto(redirectPath);
 	};
 
-    $: if ($connected && $chainId === 80001) handleRedirect();
+	$: if ($connected && $chainId === 80001) handleRedirect();
 </script>
 
 <div class="grid place-content-center min-h-screen">
@@ -61,9 +60,9 @@
 			<button class="btn" on:click={() => defaultEvmStores.setProvider()}>Connect</button>
 		{/if}
 
-        {#if redirectProgress > 0}
-                <div>Redirecting back to {redirectPath}</div>
-                <progress class="progress w-full progress-accent" value={redirectProgress} max="100"></progress>
-        {/if}
+		{#if redirectProgress > 0}
+			<div>Redirecting back to {redirectPath}</div>
+			<progress class="progress w-full progress-accent" value={redirectProgress} max="100" />
+		{/if}
 	</div>
 </div>
