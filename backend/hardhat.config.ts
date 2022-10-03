@@ -1,6 +1,7 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "solidity-coverage";
+import "hardhat-gas-reporter";
 import dotenv from "dotenv";
 dotenv.config({ path: __dirname + "/.env" });
 
@@ -14,6 +15,10 @@ const config: HardhatUserConfig = {
       url: RPC_URL,
       accounts: [`0x${PRIVATE_KEY}`],
     },
+  },
+  gasReporter: {
+    enabled: process.env.GAS_REPORT ? true : false,
+    token: "MATIC",
   },
 };
 
