@@ -10,12 +10,28 @@ This project is a web application that allows the user to store and retrieve stu
 
 ## Get Started
 
-Try running some of the following tasks:
+Things you can run in backend folder:
 
 ```shell
+# To list all the available commands
 npx hardhat help
+
+# To compile the smart contract and run the tests written in test folder
 npx hardhat test
+
+# To show gas usage along with the tests
 GAS_REPORT=true npx hardhat test
-npx hardhat node
+
+# To deploy the smart contract on the local blockchain
 npx hardhat run scripts/deploy.ts
+```
+
+Things you can run in frontend folder:
+
+```shell
+# To install all the dependencies
+yarn install
+
+# To start the development server to run the web application
+yarn dev
 ```
