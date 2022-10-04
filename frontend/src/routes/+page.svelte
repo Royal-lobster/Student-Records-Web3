@@ -48,5 +48,11 @@
     {:catch error}
       <p>{error.message}</p>
     {/await}
+  {:else}
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {#each Array(10).fill(0) as _, i}
+        <SkeletonRecordCard />
+      {/each}
+    </div>
   {/if}
 </div>
