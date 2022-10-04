@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { attachRecordContract } from "$lib/attach-contract";
-  import { connectionGuard } from "$lib/connection-guard";
-  import type { RecordDetails, ToastData } from "$lib/types";
+  import { attachRecordContract } from "$lib/shared/attach-contract";
+  import { connectionGuard } from "$lib/shared/connection-guard";
+  import type { RecordDetails } from "$lib/types";
   import { contracts } from "svelte-ethers-store";
   import { toast } from "$lib/store/toast";
 

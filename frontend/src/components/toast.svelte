@@ -1,9 +1,10 @@
 <script lang="ts">
 	import type { ToastData } from '$lib/types';
+	import { fly } from 'svelte/transition';
 	export let type: ToastData['type'];
 </script>
 
-<div class="toast toast-center w-full max-w-md sm:max-w-screen">
+<div transition:fly="{{ y: 200, duration: 500 }}" class="toast toast-center w-full max-w-md sm:max-w-screen">
 	{#if type === 'error'}
 		<div class={`alert alert-error shadow-lg rounded-md`}>
 			<div>

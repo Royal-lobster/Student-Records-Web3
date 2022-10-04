@@ -1,7 +1,7 @@
 <script lang="ts">
   import "../app.css";
   import { toastData } from "$lib/store/toast";
-  import Toast from "src/components/toast.svelte";
+  import Toast from "../components/Toast.svelte";
 </script>
 
 <div class="max-w-7xl mx-auto px-5">
