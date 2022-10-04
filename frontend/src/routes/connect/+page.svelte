@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	//@ts-ignore
+	import WalletConnectProvider from '@walletconnect/web3-provider/dist/umd/index.min';
+	import { providers } from 'ethers';
 	import {
 		defaultEvmStores,
 		connected,
@@ -9,18 +12,29 @@
 		chainId
 	} from 'svelte-ethers-store';
 
-	const urlParams = new URLSearchParams(window.location.search);
-	const redirectPath = urlParams.get('redirect');
+	let redirectPath: string | null = null;
+	if (typeof window !== 'undefined') {
+		const urlParams = new URLSearchParams(window.location.search);
+		redirectPath = urlParams.get('redirect');
+	}
 	let redirectProgress = 0;
 
-	const incrementRedirectProgress = async () => {
+	const handleWalletConnectClick = async () => {
+		const provider = new WalletConnectProvider({
+			rpc: {
+				1: 'https://rpc-mumbai.matic.today'
+			}
+		});
+		await provider.enable();
+		const web3Provider = new providers.Web3Provider(provider);
+		defaultEvmStores.setProvider(web3Provider);
+	};
+
+	const handleRedirect = async () => {
 		for (let i = 0; i < 100; i++) {
 			redirectProgress = i;
 			await new Promise((resolve) => setTimeout(resolve, 20));
 		}
-	};
-	const handleRedirect = async () => {
-		await incrementRedirectProgress();
 		if (redirectPath) goto(redirectPath);
 	};
 
@@ -43,13 +57,19 @@
 					with the record smart contract.
 				</p>
 			{/if}
-			<div class="flex items-center gap-2 border rounded-full p-1 pr-4 border-[#ffffff2a]">
-				<img
-					class="avatar w-8 h-8"
-					src="https://source.boringavatars.com/beam/{$signerAddress}"
-					alt="avatar"
-				/>
-				{$signerAddress}
+			<div class="flex flex-col  gap-2">
+				<div class="flex items-center gap-2 border rounded-full p-1 pr-4 border-gray-500/50">
+					<img
+						class="avatar w-8 h-8"
+						src="https://source.boringavatars.com/beam/{$signerAddress}"
+						alt="avatar"
+					/>
+					{$signerAddress}
+				</div>
+				<button
+					class="underline decoration-gray-500/50"
+					on:click={() => defaultEvmStores.disconnect()}>disconnect</button
+				>
 			</div>
 		{:else}
 			<h1 class="font-extrabold text-5xl">Connect to the Application</h1>
@@ -57,7 +77,8 @@
 				To use this application you need to connect to your ethereum wallet. if you don't have one
 				you can install <a href="https://metamask.io/download/">Metamask extention</a>
 			</p>
-			<button class="btn" on:click={() => defaultEvmStores.setProvider()}>Connect</button>
+			<button class="btn gap-2" on:click={() => defaultEvmStores.setProvider()}>Metamask</button>
+			<button class="btn gap-2" on:click={handleWalletConnectClick}>Wallet Connect</button>
 		{/if}
 
 		{#if redirectProgress > 0}
