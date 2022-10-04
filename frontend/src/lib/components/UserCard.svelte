@@ -5,7 +5,7 @@
 
 {#if signerAddress}
   <div
-    class="flex w-[fit-content] items-center gap-2 border rounded-full p-1 pr-4 border-gray-500/50"
+    class="flex w-[fit-content] flex-shrink-0 items-center gap-2 border rounded-full p-1 pr-4 border-gray-500/50"
   >
     <img
       class="avatar w-10 h-10"
