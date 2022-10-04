@@ -1,7 +1,27 @@
 <script lang="ts">
+  import { contractTransact } from "$lib/shared/contract-transact";
   import type { RecordDetailsFull } from "$lib/types";
+  import type { ContractReceipt } from "ethers";
+  import Modal from "../elements/Modal.svelte";
 
   export let record: RecordDetailsFull;
+
+  let isDeleteModalOpen = false;
+  function toggleDeleteModal() {
+    isDeleteModalOpen = !isDeleteModalOpen;
+  }
+
+  let deletingRecord = false;
+  let deleteResponse: ContractReceipt | null = null;
+
+  const handleDeleteRecord = async () => {
+    deletingRecord = true;
+    deleteResponse = await contractTransact("deleteRecord", [record.id]);
+    console.log({ deleteResponse });
+    deletingRecord = false;
+  };
+
+  console.log(deleteResponse);
 </script>
 
 <div class="card rounded-md bg-base-200 flex flex-col p-8">
@@ -26,7 +46,10 @@
           /></svg
         >
       </button>
-      <button class="btn btn-secondary btn-square fill-white">
+      <button
+        on:click={toggleDeleteModal}
+        class="btn btn-secondary btn-square fill-white"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -40,3 +63,22 @@
     </div>
   </div>
 </div>
+
+<Modal
+  open={isDeleteModalOpen}
+  on:toggle={toggleDeleteModal}
+  title="Delete Record"
+  primaryText="Delete"
+  primaryAction={handleDeleteRecord}
+  secondaryText="Cancel"
+  loading={deletingRecord}
+>
+  {#if deleteResponse}
+    <p>Record deleted successfully</p>
+  {:else}
+    <p>
+      Are you sure you want to delete record? Deleting record will delete all
+      its entries even if the entries are acknolwedged.
+    </p>
+  {/if}
+</Modal>

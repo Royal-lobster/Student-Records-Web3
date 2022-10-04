@@ -1,9 +1,9 @@
 <script lang="ts">
-  import RecordCard from "$lib/components/RecordCard.svelte";
-  import UserCard from "$lib/components/UserCard.svelte";
+  import RecordCard from "$lib/components/home/RecordCard.svelte";
+  import UserCard from "$lib/components/elements/ConnectedUser.svelte";
   import { attachRecordContract } from "$lib/shared/attach-contract";
   import { connectionGuard } from "$lib/shared/connection-guard";
-  import SkeletonRecordCard from "$lib/skeletons/SkeletonRecordCard.svelte";
+  import SkeletonRecordCard from "$lib/components/skeletons/SkeletonRecordCard.svelte";
   import { contracts, signerAddress } from "svelte-ethers-store";
   $: connectionGuard();
   attachRecordContract();
@@ -42,7 +42,9 @@
     {:then records}
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {#each records as record}
-          <RecordCard {record} />
+          {#if record.maintainer === $signerAddress}
+            <RecordCard {record} />
+          {/if}
         {/each}
       </div>
     {:catch error}
