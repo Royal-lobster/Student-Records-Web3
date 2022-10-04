@@ -1,0 +1,42 @@
+<script lang="ts">
+  import type { RecordDetailsFull } from "$lib/types";
+
+  export let record: RecordDetailsFull;
+</script>
+
+<div class="card bg-base-200 flex flex-col p-8">
+  <div class="flex justify-between gap-4">
+    <div class="flex flex-col gap-2">
+      <h2 class="font-bold text-2xl">{record.name}</h2>
+      <p>{record.description}</p>
+      <div class="flex gap-2">
+        <span class="font-bold">Record ID:</span>
+        <span>{record.id}</span>
+      </div>
+    </div>
+    <div class="flex gap-2 flex-col lg:flex-row">
+      <button class="btn btn-primary btn-square fill-white">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          ><path fill="none" d="M0 0h24v24H0z" /><path
+            d="M12.684 4.029a8 8 0 1 0 7.287 7.287 7.936 7.936 0 0 0-.603-2.44l1.5-1.502A9.933 9.933 0 0 1 22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2a9.982 9.982 0 0 1 4.626 1.132l-1.501 1.5a7.941 7.941 0 0 0-2.44-.603zM20.485 2.1L21.9 3.515l-9.192 9.192-1.412.003-.002-1.417L20.485 2.1z"
+          /></svg
+        >
+      </button>
+      <button class="btn btn-secondary btn-square fill-white">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          ><path fill="none" d="M0 0h24v24H0z" /><path
+            d="M17 6h5v2h-2v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8H2V6h5V3a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v3zm1 2H6v12h12V8zm-9 3h2v6H9v-6zm4 0h2v6h-2v-6zM9 4v2h6V4H9z"
+          /></svg
+        >
+      </button>
+    </div>
+  </div>
+</div>
