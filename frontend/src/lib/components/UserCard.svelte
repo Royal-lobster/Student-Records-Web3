@@ -9,7 +9,7 @@
   >
     <img
       class="avatar w-10 h-10"
-      src="https://source.boringavatars.com/beam/{$signerAddress}"
+      src="https://source.boringavatars.com/beam/40/records_{$signerAddress}"
       alt="avatar"
     />
     <div class="pr-4">
