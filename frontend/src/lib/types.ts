@@ -1,8 +1,8 @@
 export type RecordDetails = {
-	name: string;
-	description: string;
+  name: string;
+  description: string;
 };
 export type ToastData = {
-	message: string;
-	type: 'success' | 'error' | 'info' | 'warning';
+  message: string;
+  type: "success" | "error" | "info" | "warning";
 };

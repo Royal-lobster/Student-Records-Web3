@@ -1,7 +1,14 @@
 <script lang="ts">
-	import '../app.css';
+  import "../app.css";
+  import { toastData } from "$lib/store/toast";
+  import Toast from "src/components/toast.svelte";
 </script>
 
 <div class="max-w-7xl mx-auto px-5">
-	<slot />
+  <slot />
+  {#if $toastData}
+    <Toast type={$toastData.type}>
+      {$toastData.message}
+    </Toast>
+  {/if}
 </div>
