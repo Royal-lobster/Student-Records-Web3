@@ -59,7 +59,7 @@
           You can now interact with the record smart contract.
         </p>
       {/if}
-      <div class="flex flex-col  gap-2">
+      <div class="flex flex-col gap-2 overflow-x-hidden">
         <div
           class="flex items-center gap-2 border rounded-full p-1 pr-4 border-gray-500/50"
         >
@@ -68,7 +68,9 @@
             src="https://source.boringavatars.com/beam/40/records_{$signerAddress}"
             alt="avatar"
           />
-          {$signerAddress}
+          <span class="text-ellipsis overflow-hidden max-w-[70vw] w-full"
+            >{$signerAddress}</span
+          >
         </div>
         <button
           class="underline decoration-gray-500/50"
@@ -91,7 +93,7 @@
       >
     {/if}
 
-    {#if redirectProgress > 0}
+    {#if redirectProgress && redirectPath}
       <div>Redirecting back to {redirectPath}</div>
       <progress
         class="progress w-full progress-accent"
