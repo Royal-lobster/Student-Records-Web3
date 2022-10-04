@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { connectionGuard } from './../lib/connection-guard';
+	import { connectionGuard } from '$lib/connection-guard';
 	$: connectionGuard();
 </script>
 

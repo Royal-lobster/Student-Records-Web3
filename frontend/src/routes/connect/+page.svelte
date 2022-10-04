@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { config } from '$lib/config';
 	//@ts-ignore
 	import WalletConnectProvider from '@walletconnect/web3-provider/dist/umd/index.min';
 	import { providers } from 'ethers';
@@ -38,13 +39,13 @@
 		if (redirectPath) goto(redirectPath);
 	};
 
-	$: if ($connected && $chainId === 80001) handleRedirect();
+	$: if ($connected && $chainId === config.chainId) handleRedirect();
 </script>
 
 <div class="grid place-content-center min-h-screen">
 	<div class=" flex flex-col gap-6 max-w-md">
 		{#if $connected}
-			{#if $chainId !== 80001}
+			{#if $chainId !== config.chainId}
 				<h1 class="font-extrabold text-5xl">🚨 Wrong Network</h1>
 				<p>
 					Please connect to the Polygon Mumbai Testnet Network. You are currently connected to the {$chainData.name}
