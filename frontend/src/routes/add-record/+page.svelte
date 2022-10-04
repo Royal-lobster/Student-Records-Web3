@@ -23,8 +23,11 @@
 			);
 			const data = await response.wait();
 		} catch (e: any) {
-			toastData = { message: e.message as string, type: Math.floor(Math.random() * 100) % 2 === 0 ? 'warning' :'error' };
-			console.log(toastData)
+			toastData = {
+				message: e.message as string,
+				type: Math.floor(Math.random() * 100) % 2 === 0 ? 'warning' : 'error'
+			};
+			console.log(toastData);
 			setTimeout(() => {
 				toastData = null;
 			}, 3000);
