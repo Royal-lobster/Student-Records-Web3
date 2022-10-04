@@ -3,6 +3,7 @@
   import UserCard from "$lib/components/UserCard.svelte";
   import { attachRecordContract } from "$lib/shared/attach-contract";
   import { connectionGuard } from "$lib/shared/connection-guard";
+  import SkeletonRecordCard from "$lib/skeletons/SkeletonRecordCard.svelte";
   import { contracts, signerAddress } from "svelte-ethers-store";
   $: connectionGuard();
   attachRecordContract();
@@ -16,7 +17,11 @@
 
   {#if $signerAddress}
     {#await $contracts.recordsContract.getRecordsByMaintainer($signerAddress)}
-      <p>loading...</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {#each Array(10).fill(0) as _, i}
+          <SkeletonRecordCard />
+        {/each}
+      </div>
     {:then records}
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {#each records as record}

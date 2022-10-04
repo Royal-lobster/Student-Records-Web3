@@ -4,7 +4,7 @@
   export let record: RecordDetailsFull;
 </script>
 
-<div class="card bg-base-200 flex flex-col p-8">
+<div class="card rounded-md bg-base-200 flex flex-col p-8">
   <div class="flex justify-between gap-4">
     <div class="flex flex-col gap-2">
       <h2 class="font-bold text-2xl">{record.name}</h2>
