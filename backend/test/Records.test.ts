@@ -46,24 +46,48 @@ describe("Records Contract", function () {
   }
 
   it("Should be able to add/read record", async function () {
-    const { DeployedRecordsContract } = await loadFixture(add0thRecordFixture);
+    const { DeployedRecordsContract } = await add0thRecordFixture();
 
     const recordReadTx = await DeployedRecordsContract.getRecord(0);
     expect(recordReadTx.name).to.equal(firstRecordData.name);
   });
 
-  it("Should be able to add/read new entry to existing record", async function () {
-    const { DeployedRecordsContract, addr1 } = await loadFixture(
-      add0thEntryTo0thRecordFixture
+  it("Should be able to emit correct record added event", async function () {
+    const { DeployedRecordsContract } = await deployTokenFixture();
+    const recordIdTx = await DeployedRecordsContract.addRecord(
+      firstRecordData.name,
+      firstRecordData.description
     );
+    const recordId = await recordIdTx.wait();
+    expect(
+      recordId.events && recordId.events[0].args && recordId.events[0].args[0]
+    ).to.equal(ethers.BigNumber.from(0));
+  });
+
+  it("Should be able to add/read new entry to existing record", async function () {
+    const { DeployedRecordsContract, addr1 } =
+      await add0thEntryTo0thRecordFixture();
     const entryReadTx = await DeployedRecordsContract.getEntry(0, 0);
     expect(entryReadTx.recipient).to.equal(addr1.address);
   });
 
-  it("Should'nt be able to allow non-maintainers to add entry", async function () {
-    const { DeployedRecordsContract, addr2 } = await loadFixture(
-      add0thEntryTo0thRecordFixture
+  it("Should be able to emit correct entry added event", async function () {
+    const { DeployedRecordsContract, addr1 } =
+      await add0thEntryTo0thRecordFixture();
+    const entryIdTx = await DeployedRecordsContract.addEntry(
+      0,
+      addr1.address,
+      "SOME_IPFS_HASH"
     );
+    const entryId = await entryIdTx.wait();
+    expect(
+      entryId.events && entryId.events[0].args && entryId.events[0].args[0]
+    ).to.equal(ethers.BigNumber.from(0));
+  });
+
+  it("Should'nt be able to allow non-maintainers to add entry", async function () {
+    const { DeployedRecordsContract, addr2 } =
+      await add0thEntryTo0thRecordFixture();
     await expect(
       DeployedRecordsContract.connect(addr2).addEntry(
         0,
@@ -74,9 +98,8 @@ describe("Records Contract", function () {
   });
 
   it("Should allow recipient to acknowledge the entry", async function () {
-    const { DeployedRecordsContract, addr1 } = await loadFixture(
-      add0thEntryTo0thRecordFixture
-    );
+    const { DeployedRecordsContract, addr1 } =
+      await add0thEntryTo0thRecordFixture();
     await (
       await DeployedRecordsContract.connect(addr1).acknowledgeEntry(0, 0)
     ).wait();
@@ -85,18 +108,34 @@ describe("Records Contract", function () {
   });
 
   it("Should'nt be able to allow non-recipient to acknowledge the entry", async function () {
-    const { DeployedRecordsContract, addr2 } = await loadFixture(
-      add0thEntryTo0thRecordFixture
-    );
+    const { DeployedRecordsContract, addr2 } =
+      await add0thEntryTo0thRecordFixture();
     await expect(
       DeployedRecordsContract.connect(addr2).acknowledgeEntry(0, 0)
     ).to.be.revertedWith("Only the recipient can acknowledge an entry.");
   });
 
+  it("Should allow recipient to unAcknowledge an entry  ", async function () {
+    const { DeployedRecordsContract, addr1 } =
+      await add0thEntryTo0thRecordFixture();
+    await (
+      await DeployedRecordsContract.connect(addr1).unAcknowledgeEntry(0, 0)
+    ).wait();
+    const entryReadTx = await DeployedRecordsContract.getEntry(0, 0);
+    expect(entryReadTx.acknowledged).to.equal(false);
+  });
+
+  it("Should'nt be able to allow non-recipient to unAcknowledge the entry", async function () {
+    const { DeployedRecordsContract, addr2 } =
+      await add0thEntryTo0thRecordFixture();
+    await expect(
+      DeployedRecordsContract.connect(addr2).unAcknowledgeEntry(0, 0)
+    ).to.be.revertedWith("Only the recipient can unacknowledge an entry.");
+  });
+
   it("Should allow adding multiple entries and show counts", async function () {
-    const { DeployedRecordsContract, addr2, addr3 } = await loadFixture(
-      add0thEntryTo0thRecordFixture
-    );
+    const { DeployedRecordsContract, addr2, addr3 } =
+      await add0thEntryTo0thRecordFixture();
     const additionalEntriesData = [
       { recipient: addr2.address, ipfsHash: "SOME_IPFS_HASH" },
       { recipient: addr3.address, ipfsHash: "SOME_IPFS_HASH" },
@@ -115,9 +154,7 @@ describe("Records Contract", function () {
   });
 
   it("Should allow adding multiple records and show counts", async function () {
-    const { DeployedRecordsContract } = await loadFixture(
-      add0thEntryTo0thRecordFixture
-    );
+    const { DeployedRecordsContract } = await add0thEntryTo0thRecordFixture();
     const additionalRecordData = [
       {
         name: "Student Attendance for Central Metrics Examination",
@@ -147,9 +184,7 @@ describe("Records Contract", function () {
   });
 
   it("Should show all records by maintainer address", async function () {
-    const { DeployedRecordsContract, owner } = await loadFixture(
-      deployTokenFixture
-    );
+    const { DeployedRecordsContract, owner } = await deployTokenFixture();
     const additionalRecordData = [
       {
         name: "Student Attendance for Central Metrics Examination",
@@ -183,18 +218,15 @@ describe("Records Contract", function () {
   });
 
   it("Should be able to delete entry of record", async function () {
-    const { DeployedRecordsContract } = await loadFixture(
-      add0thEntryTo0thRecordFixture
-    );
+    const { DeployedRecordsContract } = await add0thEntryTo0thRecordFixture();
     await (await DeployedRecordsContract.deleteEntry(0, 0)).wait();
     const entry = await DeployedRecordsContract.getEntry(0, 0);
     expect(entry.recipient).to.equal(ethers.constants.AddressZero);
   });
 
   it("Should'nt be able to allow non-maintainers to delete entry", async function () {
-    const { DeployedRecordsContract, addr2 } = await loadFixture(
-      add0thEntryTo0thRecordFixture
-    );
+    const { DeployedRecordsContract, addr2 } =
+      await add0thEntryTo0thRecordFixture();
     await expect(
       DeployedRecordsContract.connect(addr2).deleteEntry(0, 0)
     ).to.be.revertedWith(
@@ -203,7 +235,7 @@ describe("Records Contract", function () {
   });
 
   it("Should be able to delete record and reduce _recordsLength", async function () {
-    const { DeployedRecordsContract } = await loadFixture(add0thRecordFixture);
+    const { DeployedRecordsContract } = await add0thRecordFixture();
     await (await DeployedRecordsContract.deleteRecord(0)).wait();
     const recordCount = await DeployedRecordsContract._recordsLength();
     const recordReadTx = await DeployedRecordsContract.getRecord(0);
@@ -212,16 +244,14 @@ describe("Records Contract", function () {
   });
 
   it("Should'nt be able to allow non-maintainers to delete record", async function () {
-    const { DeployedRecordsContract, addr2 } = await loadFixture(
-      add0thRecordFixture
-    );
+    const { DeployedRecordsContract, addr2 } = await add0thRecordFixture();
     await expect(
       DeployedRecordsContract.connect(addr2).deleteRecord(0)
     ).to.be.revertedWith("Only the maintainer can delete a record.");
   });
 
   it("Should be able to update record details", async function () {
-    const { DeployedRecordsContract } = await loadFixture(add0thRecordFixture);
+    const { DeployedRecordsContract } = await add0thRecordFixture();
     const newRecordData = {
       name: "Workshop Grades for Local Metrics Examination",
       description:
@@ -240,9 +270,7 @@ describe("Records Contract", function () {
   });
 
   it("Should'nt be able to update record details by non-maintainer", async function () {
-    const { DeployedRecordsContract, addr2 } = await loadFixture(
-      add0thRecordFixture
-    );
+    const { DeployedRecordsContract, addr2 } = await add0thRecordFixture();
     await expect(
       DeployedRecordsContract.connect(addr2).updateRecordDetails(
         0,
@@ -255,9 +283,7 @@ describe("Records Contract", function () {
   });
 
   it("Should be able to update record maintainer", async function () {
-    const { DeployedRecordsContract, addr3 } = await loadFixture(
-      add0thRecordFixture
-    );
+    const { DeployedRecordsContract, addr3 } = await add0thRecordFixture();
     await (
       await DeployedRecordsContract.updateRecordMaintainer(0, addr3.address)
     ).wait();

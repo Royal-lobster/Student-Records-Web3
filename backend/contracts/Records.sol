@@ -28,6 +28,21 @@ contract Records {
 
     uint public _recordsLength = 0;
 
+    event RecordAdded(
+        uint id,
+        string name,
+        string description,
+        address maintainer
+    );
+
+    event EntryAdded(
+        uint record_id,
+        uint entry_id,
+        address recipient,
+        bool acknowledged,
+        string ipfs_data
+    );
+
     /*
      * @dev Create a new record.
      * @param _name The name of the record.
@@ -41,6 +56,7 @@ contract Records {
         });
         _maintainer_records[msg.sender].push(_recordsLength);
         _recordsLength++;
+        emit RecordAdded(_recordsLength - 1, _name, _description, msg.sender);
     }
 
     /*
@@ -65,6 +81,13 @@ contract Records {
                 ipfs_data: _ipfs_data
             })
         );
+        emit EntryAdded(
+            _recordId,
+            _entries[_recordId].length - 1,
+            _recipient,
+            false,
+            _ipfs_data
+        );
     }
 
     /*
@@ -78,6 +101,19 @@ contract Records {
             "Only the recipient can acknowledge an entry."
         );
         _entries[_recordId][_entryId].acknowledged = true;
+    }
+
+    /*
+     * @dev Unacknowledge an entry.
+     * @param _recordId The id of the record.
+     * @param _entryId The id of the entry.
+     */
+    function unAcknowledgeEntry(uint _recordId, uint _entryId) public {
+        require(
+            _entries[_recordId][_entryId].recipient == msg.sender,
+            "Only the recipient can unacknowledge an entry."
+        );
+        _entries[_recordId][_entryId].acknowledged = false;
     }
 
     /*
