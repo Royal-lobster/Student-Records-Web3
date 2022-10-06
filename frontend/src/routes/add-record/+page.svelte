@@ -24,6 +24,8 @@
       payload.description,
     ]);
     loading = false;
+
+    toggleModalOpen();
   };
 </script>
 
@@ -70,26 +72,15 @@
   title="✅ Transaction Succesfull"
   secondaryText="Yay !"
 >
-  <TransactionSummaryTable {transactionResult}>
-    <tr>
-      <th>Record ID</th>
-      <td
-        >{BigNumber.from(
-          transactionResult?.events?.[0].args?.[0]
-        ).toString()}</td
-      >
-    </tr>
-    <tr>
-      <th>Record Name</th>
-      <td>{transactionResult?.events?.[0].args?.[1]}</td>
-    </tr>
-    <tr>
-      <th>Record Description</th>
-      <td>{transactionResult?.events?.[0].args?.[2]}</td>
-    </tr>
-    <tr>
-      <th>Record Maintainer</th>
-      <td>{transactionResult?.events?.[0].args?.[3]}</td>
-    </tr>
-  </TransactionSummaryTable>
+  <TransactionSummaryTable
+    {transactionResult}
+    additionalData={[
+      [
+        "Record ID",
+        BigNumber.from(transactionResult?.events?.[0].args?.[0]).toString(),
+      ],
+      ["Record Name", transactionResult?.events?.[0].args?.[1]],
+      ["Record Description", transactionResult?.events?.[0].args?.[2]],
+    ]}
+  />
 </Modal>

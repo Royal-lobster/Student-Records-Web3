@@ -24,10 +24,8 @@
   <input type="checkbox" hidden bind:checked={open} class="modal-toggle" />
   <div class="modal modal-bottom sm:modal-middle">
     <div class="modal-box">
-      <h3 class="font-bold text-lg">{title}</h3>
-      <div class="py-4">
-        <slot />
-      </div>
+      <h3 class="font-bold text-lg mb-5">{title}</h3>
+      <slot />
       <div class="modal-action">
         {#if secondaryText}
           <button
