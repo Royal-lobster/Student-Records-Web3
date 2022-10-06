@@ -224,6 +224,15 @@ describe("Records Contract", function () {
     expect(entry.recipient).to.equal(ethers.constants.AddressZero);
   });
 
+  it("Should remove the record id from maintainer's records", async function () {
+    const { DeployedRecordsContract, owner } =
+      await add0thEntryTo0thRecordFixture();
+    await (await DeployedRecordsContract.deleteRecord(0)).wait();
+    const maintainerRecords =
+      await DeployedRecordsContract.getRecordsByMaintainer(owner.address);
+    expect(maintainerRecords.length).to.equal(0);
+  });
+
   it("Should'nt be able to allow non-maintainers to delete entry", async function () {
     const { DeployedRecordsContract, addr2 } =
       await add0thEntryTo0thRecordFixture();

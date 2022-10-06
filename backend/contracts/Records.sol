@@ -245,6 +245,15 @@ contract Records {
         );
         delete _records[_recordId];
         delete _entries[_recordId];
+        for (uint i = 0; i < _maintainer_records[msg.sender].length; i++) {
+            if (_maintainer_records[msg.sender][i] == _recordId) {
+                _maintainer_records[msg.sender][i] = _maintainer_records[
+                    msg.sender
+                ][_maintainer_records[msg.sender].length - 1];
+                _maintainer_records[msg.sender].pop();
+                break;
+            }
+        }
         _recordsLength--;
     }
 
