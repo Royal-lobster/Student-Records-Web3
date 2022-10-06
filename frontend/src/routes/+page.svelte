@@ -42,11 +42,17 @@
     {:then records}
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {#each records as record}
-          {#if record.maintainer === $signerAddress}
-            <RecordCard {record} />
-          {/if}
+          <RecordCard {record} />
         {/each}
       </div>
+      {#if records.length === 0}
+        <div class="flex flex-col gap-10 items-center justify-center">
+          <img src="/images/empty.svg" alt="Empty" class="w-1/2" />
+          <h1 class="text-2xl">
+            Create new record by pressing "new record" button
+          </h1>
+        </div>
+      {/if}
     {:catch error}
       <p>{error.message}</p>
     {/await}
