@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "husky": "^8.0.1"
-  },
-  "scripts": {
-    "prepare": "husky install"
-  }
-}
