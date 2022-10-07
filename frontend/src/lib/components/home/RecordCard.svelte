@@ -72,6 +72,7 @@
   primaryAction={handleDeleteRecord}
   secondaryText="Cancel"
   loading={deletingRecord}
+  emotion="error"
 >
   {#if deleteResponse}
     <p>Record deleted successfully</p>

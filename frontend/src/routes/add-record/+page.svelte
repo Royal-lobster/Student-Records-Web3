@@ -2,9 +2,11 @@
   import { connectionGuard } from "$lib/shared/connection-guard";
   import type { RecordDetails } from "$lib/types";
   import Modal from "$lib/components/elements/Modal.svelte";
-  import { BigNumber, type ContractReceipt } from "ethers";
+  import type { ContractReceipt } from "ethers";
   import { contractTransact } from "$lib/shared/contract-transact";
   import TransactionSummaryTable from "$lib/components/elements/TransactionSummaryTable.svelte";
+  import { goto } from "$app/navigation";
+  import { getRecordId } from "$lib/shared/utils";
 
   $: connectionGuard();
 
@@ -25,8 +27,11 @@
     ]);
     loading = false;
 
+    console.log(transactionResult);
+
     if (transactionResult) {
       toggleModalOpen();
+      (e.target as HTMLFormElement).reset();
     }
   };
 </script>
@@ -71,16 +76,16 @@
 <Modal
   open={isModalOpen}
   on:toggle={toggleModalOpen}
-  title="✅ Transaction Succesfull"
-  secondaryText="Yay !"
+  title="🎊 &nbsp New Record Created"
+  secondaryText="Close"
+  primaryText="View Record"
+  primaryAction={() =>
+    goto(transactionResult ? `/record/${getRecordId(transactionResult)}` : "/")}
 >
   <TransactionSummaryTable
     {transactionResult}
     additionalData={[
-      [
-        "Record ID",
-        BigNumber.from(transactionResult?.events?.[0].args?.[0]).toString(),
-      ],
+      ["Record ID", transactionResult && getRecordId(transactionResult)],
       ["Record Name", transactionResult?.events?.[0].args?.[1]],
       ["Record Description", transactionResult?.events?.[0].args?.[2]],
     ]}

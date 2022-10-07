@@ -1,5 +1,5 @@
 <script>
-  import { shortenAddress } from "$lib/shared/shorten-address";
+  import { shortenAddress } from "$lib/shared/utils";
   import { defaultEvmStores, signerAddress } from "svelte-ethers-store";
 </script>
 

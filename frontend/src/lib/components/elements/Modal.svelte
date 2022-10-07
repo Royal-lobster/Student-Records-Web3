@@ -8,6 +8,16 @@
   export let primaryText: string = "";
   export let secondaryText: string = "";
   export let loading: boolean = false;
+  export let emotion:
+    | "success"
+    | "warning"
+    | "error"
+    | "info"
+    | "primary"
+    | "secondary"
+    | "accent"
+    | "ghost"
+    | "link" = "primary";
 
   const dispatch = createEventDispatcher();
 
@@ -24,7 +34,7 @@
   <input type="checkbox" hidden bind:checked={open} class="modal-toggle" />
   <div class="modal modal-bottom sm:modal-middle">
     <div class="modal-box">
-      <h3 class="font-bold text-lg mb-5">{title}</h3>
+      <h3 class="font-bold text-xl mb-5">{title}</h3>
       <slot />
       <div class="modal-action">
         {#if secondaryText}
@@ -40,7 +50,7 @@
           <button
             on:click={primaryAction}
             disabled={loading}
-            class={`btn ${loading && "loading"} btn-error`}
+            class={`btn ${loading && "loading"} btn-${emotion}`}
             >{primaryText}</button
           >
         {/if}
