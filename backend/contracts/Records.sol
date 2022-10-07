@@ -4,12 +4,6 @@ pragma solidity >=0.7.3;
 
 contract Records {
     struct Record {
-        string name;
-        string description;
-        address maintainer;
-    }
-
-    struct RecordWithId {
         uint256 id;
         string name;
         string description;
@@ -25,8 +19,6 @@ contract Records {
     mapping(uint => Record) _records;
     mapping(uint => Entry[]) _entries;
     mapping(address => uint[]) _maintainer_records;
-
-    uint public _recordsLength = 0;
 
     event RecordAdded(
         uint id,
@@ -49,14 +41,17 @@ contract Records {
      * @param _description The description of the record.
      */
     function addRecord(string memory _name, string memory _description) public {
-        _records[_recordsLength] = Record({
+        uint id = uint(
+            keccak256(abi.encodePacked(block.timestamp, msg.sender)) >> 192
+        ); // 20 digit id
+        _records[id] = Record({
+            id: id,
             name: _name,
             description: _description,
             maintainer: msg.sender
         });
-        _maintainer_records[msg.sender].push(_recordsLength);
-        _recordsLength++;
-        emit RecordAdded(_recordsLength - 1, _name, _description, msg.sender);
+        _maintainer_records[msg.sender].push(id);
+        emit RecordAdded(id, _name, _description, msg.sender);
     }
 
     /*
@@ -134,13 +129,13 @@ contract Records {
     function getRecordsByMaintainer(address _maintainer)
         public
         view
-        returns (RecordWithId[] memory)
+        returns (Record[] memory)
     {
-        RecordWithId[] memory records = new RecordWithId[](
+        Record[] memory records = new Record[](
             _maintainer_records[_maintainer].length
         );
         for (uint i = 0; i < _maintainer_records[_maintainer].length; i++) {
-            records[i] = RecordWithId({
+            records[i] = Record({
                 id: _maintainer_records[_maintainer][i],
                 name: _records[_maintainer_records[_maintainer][i]].name,
                 description: _records[_maintainer_records[_maintainer][i]]
@@ -254,7 +249,6 @@ contract Records {
                 break;
             }
         }
-        _recordsLength--;
     }
 
     /*
