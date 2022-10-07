@@ -12,3 +12,7 @@ export const getRecordId = (reciept: ContractReceipt) => {
     reciept.events && reciept.events[0].args && reciept.events[0].args[0]
   ).toBigInt();
 };
+
+export const truncate = (str: string, n: number) => {
+  return str.length > n ? str.substring(0, n - 1) + "..." : str;
+};

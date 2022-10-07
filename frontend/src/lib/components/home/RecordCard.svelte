@@ -1,10 +1,14 @@
 <script lang="ts">
   import { contractTransact } from "$lib/shared/contract-transact";
+  import { truncate } from "$lib/shared/utils";
   import type { RecordDetailsFull } from "$lib/types";
-  import type { ContractReceipt } from "ethers";
+  import { BigNumber, type ContractReceipt } from "ethers";
+  import { createEventDispatcher } from "svelte";
   import Modal from "../elements/Modal.svelte";
 
   export let record: RecordDetailsFull;
+
+  const dispatch = createEventDispatcher<{ remove: bigint }>();
 
   let isDeleteModalOpen = false;
   function toggleDeleteModal() {
@@ -17,20 +21,18 @@
   const handleDeleteRecord = async () => {
     deletingRecord = true;
     deleteResponse = await contractTransact("deleteRecord", [record.id]);
-    console.log({ deleteResponse });
+    dispatch("remove", BigNumber.from(record.id).toBigInt());
     deletingRecord = false;
   };
-
-  console.log(deleteResponse);
 </script>
 
 <div class="card rounded-md bg-base-200 flex flex-col p-8">
   <div class="flex justify-between gap-4">
     <div class="flex flex-col gap-2">
       <h2 class="font-bold text-2xl">{record.name}</h2>
-      <p>{record.description}</p>
+      <p>{truncate(record.description, 90)}</p>
       <div class="flex gap-2">
-        <span class="font-bold">Record ID:</span>
+        <span class="font-bold">ID:</span>
         <span>{record.id}</span>
       </div>
     </div>

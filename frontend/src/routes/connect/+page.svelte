@@ -34,7 +34,7 @@
   const handleRedirect = async () => {
     for (let i = 0; i < 100; i++) {
       redirectProgress = i;
-      await new Promise((resolve) => setTimeout(resolve, 20));
+      await new Promise((resolve) => setTimeout(resolve, 5));
     }
     if (redirectPath) goto(redirectPath);
   };
