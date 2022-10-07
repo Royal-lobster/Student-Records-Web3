@@ -25,7 +25,9 @@
     ]);
     loading = false;
 
-    toggleModalOpen();
+    if (transactionResult) {
+      toggleModalOpen();
+    }
   };
 </script>
 

@@ -1,7 +1,6 @@
 import { toast } from "$lib/store/toast";
 import type { ContractReceipt } from "ethers";
 import { contracts } from "svelte-ethers-store";
-import { writable } from "svelte/store";
 import { attachRecordContract } from "./attach-contract";
 
 export const contractTransact = async (
@@ -10,9 +9,10 @@ export const contractTransact = async (
   options: any = {}
 ) => {
   attachRecordContract();
+
   const contractResponse: Promise<ContractReceipt | null> = new Promise(
     (resolve) => {
-      contracts.subscribe(async (c) => {
+      const unsubscribe = contracts.subscribe(async (c) => {
         try {
           const result = await c.recordsContract[methodName](...args, options);
           resolve((await result.wait()) as ContractReceipt);
@@ -24,6 +24,7 @@ export const contractTransact = async (
           resolve(null);
         }
       });
+      unsubscribe();
     }
   );
 
