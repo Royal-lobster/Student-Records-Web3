@@ -1,4 +1,4 @@
 export const config = {
-  contractAddress: "0x3B6F33b9d45CF6bC7B4F1E67ac926996858196ac",
+  contractAddress: "0xe768d4143cb29D91bBfE5953C1a27bDc41B33136",
   chainId: 80001,
 };
