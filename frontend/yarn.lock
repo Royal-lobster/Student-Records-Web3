@@ -5455,6 +5455,11 @@ svelte-proxied-store@^1.1.4:
   resolved "https://registry.yarnpkg.com/svelte-proxied-store/-/svelte-proxied-store-1.1.4.tgz#220b2a2f56574b65fff48e526fcea83208934122"
   integrity sha512-Vz8egScKBx3Ve1+MlaX0D6hEgYgtIQzpZx4HtzI6+J0mJiVgfaxnEdvSVGDWNb5E+zGzGGXdmzxqjfOIyNEswQ==
 
+svelte-remixicon@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/svelte-remixicon/-/svelte-remixicon-1.0.1.tgz#2aec22c024b94774a3e80153e984714fcb545407"
+  integrity sha512-Jago+glcU0j5j+j9ELvl9EVEVIbYWVdxfSdi0nUUr2o9Iz75OdJRD7OSkEBeIl2Tm3n9dT4WS1eTo+2BdMviRw==
+
 svelte@^3.0.0, svelte@^3.44.0:
   version "3.50.1"
   resolved "https://registry.yarnpkg.com/svelte/-/svelte-3.50.1.tgz#b35fbc5e79ddd71e8bb27c3149ee6ff903841239"

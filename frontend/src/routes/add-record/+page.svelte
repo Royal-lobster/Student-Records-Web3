@@ -7,6 +7,7 @@
   import TransactionSummaryTable from "$lib/components/elements/TransactionSummaryTable.svelte";
   import { goto } from "$app/navigation";
   import { getRecordId } from "$lib/shared/utils";
+  import { ArrowLeftLine } from "svelte-remixicon";
 
   $: connectionGuard();
 
@@ -36,6 +37,14 @@
 
 <div class="grid place-content-center min-h-screen">
   <div class=" flex flex-col gap-6 max-w-md">
+    <!-- go back -->
+    <button
+      class="flex items-center gap-2 text-gray-500 hover:opacity-70"
+      on:click={() => goto("/")}
+    >
+      <ArrowLeftLine />
+      Go Back
+    </button>
     <h1 class="font-extrabold text-5xl">Add New Record</h1>
     <p>
       Fill the form below to add a new record and click on add record button.
