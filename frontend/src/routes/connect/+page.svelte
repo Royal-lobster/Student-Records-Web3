@@ -20,15 +20,24 @@
   }
   let redirectProgress = 0;
 
-  const handleWalletConnectClick = async () => {
-    const provider = new WalletConnectProvider({
-      rpc: {
-        1: "https://rpc-mumbai.matic.today",
-      },
-    });
-    await provider.enable();
-    const web3Provider = new providers.Web3Provider(provider);
-    defaultEvmStores.setProvider(web3Provider);
+  const handleWalletConnectClick = async (type: string) => {
+    switch (type) {
+      case "walletconnect":
+        const provider = new WalletConnectProvider({
+          rpc: {
+            1: "https://rpc-mumbai.matic.today",
+          },
+        });
+        await provider.enable();
+        const web3Provider = new providers.Web3Provider(provider);
+        defaultEvmStores.setProvider(web3Provider);
+        break;
+      case "metamask":
+        defaultEvmStores.setProvider();
+      default:
+        break;
+    }
+    localStorage.setItem("connected", type);
   };
 
   const handleRedirect = async () => {
@@ -85,10 +94,13 @@
           href="https://metamask.io/download/">Metamask extention</a
         >
       </p>
-      <button class="btn gap-2" on:click={() => defaultEvmStores.setProvider()}
-        >Metamask</button
+      <button
+        class="btn gap-2"
+        on:click={() => handleWalletConnectClick("metamask")}>Metamask</button
       >
-      <button class="btn gap-2" on:click={handleWalletConnectClick}
+      <button
+        class="btn gap-2"
+        on:click={() => handleWalletConnectClick("walletconnect")}
         >Wallet Connect</button
       >
     {/if}

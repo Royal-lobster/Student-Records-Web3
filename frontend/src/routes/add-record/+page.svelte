@@ -27,8 +27,6 @@
     ]);
     loading = false;
 
-    console.log(transactionResult);
-
     if (transactionResult) {
       toggleModalOpen();
       (e.target as HTMLFormElement).reset();
