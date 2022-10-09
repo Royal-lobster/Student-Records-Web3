@@ -8,6 +8,7 @@
   import { goto } from "$app/navigation";
   import { getRecordId } from "$lib/shared/utils";
   import { ArrowLeftLine } from "svelte-remixicon";
+  import Navbar from "$lib/components/layout/Navbar.svelte";
 
   $: connectionGuard();
 
@@ -35,9 +36,10 @@
   };
 </script>
 
-<div class="grid place-content-center min-h-screen">
+<Navbar />
+
+<div class="grid place-content-center ">
   <div class=" flex flex-col gap-6 max-w-md">
-    <!-- go back -->
     <button
       class="flex items-center gap-2 text-gray-500 hover:opacity-70"
       on:click={() => goto("/")}
