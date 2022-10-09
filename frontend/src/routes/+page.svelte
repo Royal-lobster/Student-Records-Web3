@@ -17,11 +17,14 @@
   let records: RecordDetailsFull[] | null = [];
 
   $: {
-    $contracts.recordsContract
-      ?.getRecordsByMaintainer($signerAddress)
-      .then((res: RecordDetailsFull[]) => {
-        records = res.length ? res : null;
-      });
+    let unsubscribe = contracts.subscribe((c) =>
+      c.recordsContract
+        ?.getRecordsByMaintainer($signerAddress)
+        .then((res: RecordDetailsFull[]) => {
+          records = res.length ? res : null;
+        })
+    );
+    unsubscribe();
   }
 
   $: recordRemoved = (e: CustomEvent) => {

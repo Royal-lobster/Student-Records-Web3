@@ -1,7 +1,7 @@
 <script lang="ts">
   import { BigNumber, type ContractReceipt } from "ethers";
   export let transactionResult: ContractReceipt | null = null;
-  export let additionalData: Array<[string, string]>;
+  export let additionalData: Array<[string, string]> = [];
 </script>
 
 <table class="table-auto table-zebra  w-full table-compact">

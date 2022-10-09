@@ -5,6 +5,7 @@
   import { BigNumber, type ContractReceipt } from "ethers";
   import { createEventDispatcher } from "svelte";
   import Modal from "../elements/Modal.svelte";
+  import TransactionSummaryTable from "../elements/TransactionSummaryTable.svelte";
 
   export let record: RecordDetailsFull;
 
@@ -21,7 +22,6 @@
   const handleDeleteRecord = async () => {
     deletingRecord = true;
     deleteResponse = await contractTransact("deleteRecord", [record.id]);
-    dispatch("remove", BigNumber.from(record.id).toBigInt());
     deletingRecord = false;
   };
 </script>
@@ -70,14 +70,17 @@
   open={isDeleteModalOpen}
   on:toggle={toggleDeleteModal}
   title="Delete Record"
-  primaryText="Delete"
-  primaryAction={handleDeleteRecord}
-  secondaryText="Cancel"
+  primaryText={deleteResponse ? undefined : "Delete"}
+  primaryAction={deleteResponse ? undefined : handleDeleteRecord}
+  secondaryText={deleteResponse ? "Yay !" : "Cancel"}
+  secondaryAction={() =>
+    dispatch("remove", BigNumber.from(record.id).toBigInt())}
   loading={deletingRecord}
   emotion="error"
 >
   {#if deleteResponse}
-    <p>Record deleted successfully</p>
+    <p class="mb-5">Record deleted successfully</p>
+    <TransactionSummaryTable transactionResult={deleteResponse} />
   {:else}
     <p>
       Are you sure you want to delete record? Deleting record will delete all
