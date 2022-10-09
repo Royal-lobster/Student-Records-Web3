@@ -12,13 +12,13 @@
   >
     {#if $signerAddress}
       <img
-        class="avatar w-10 h-10"
+        class="avatar w-10 h-10 bg-current rounded-full"
         src="https://source.boringavatars.com/beam/40/records_{$signerAddress}"
         alt="avatar"
       />
-      <div class="pr-4">
+      <div class="pr-4 w-24">
         <div class="text-xs">CONNECTED</div>
-        <div class="w-24">{shortenAddress($signerAddress)}</div>
+        <div class="text-sm font-bold">{shortenAddress($signerAddress)}</div>
       </div>
     {:else}
       <Loader4Line class="w-10 h-10 animate-spin" />
