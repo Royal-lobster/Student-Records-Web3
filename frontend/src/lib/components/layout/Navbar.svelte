@@ -15,7 +15,7 @@
         href="/add-record"
         class="btn rounded-full gap-2 px-[11px] sm:px-4 fill-slate-100/70"
       >
-        New <span class="hidden sm:inline">Record</span>
+        <span>New <span class="hidden sm:inline">Record</span></span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"

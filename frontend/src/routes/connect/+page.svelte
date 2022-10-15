@@ -1,7 +1,8 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { config } from "$lib/config";
-  import { connect } from "$lib/shared/connect";
+  import { connect, web3authModalOpen } from "$lib/shared/connect";
+  import { disconnect } from "$lib/shared/disconnect";
 
   import {
     defaultEvmStores,
@@ -52,9 +53,8 @@
             >{$signerAddress}</span
           >
         </div>
-        <button
-          class="underline decoration-gray-500/50"
-          on:click={() => defaultEvmStores.disconnect()}>disconnect</button
+        <button class="underline decoration-gray-500/50" on:click={disconnect}
+          >disconnect</button
         >
       </div>
     {:else}
@@ -63,7 +63,14 @@
         Click on the button below to connet to the application. You can login
         with any of your social media account or with your wallet.
       </p>
-      <button class="btn gap-2" on:click={connect}>Connect</button>
+
+      {#if !$web3authModalOpen}
+        <button class="btn gap-2" on:click={connect}>Connect</button>
+      {:else}
+        <button class="btn loading gap-2" disabled on:click={connect}
+          >Connect initating</button
+        >
+      {/if}
     {/if}
   </div>
 </div>
