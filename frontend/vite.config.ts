@@ -1,16 +1,20 @@
-import { sveltekit } from "@sveltejs/kit/vite";
-import type { UserConfig } from "vite";
+import { defineConfig } from "vite";
 import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill";
 import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
 import rollupNodePolyFill from "rollup-plugin-node-polyfills";
 import builtins from "rollup-plugin-node-builtins";
+import { sveltekit } from "@sveltejs/kit/vite";
 
-const config: UserConfig = {
+const builtinsPlugin = builtins();
+const rollupNodePolyFillPlugin = rollupNodePolyFill();
+const plugins = [];
+if (builtinsPlugin) plugins.push(builtinsPlugin);
+if (rollupNodePolyFillPlugin) plugins.push(rollupNodePolyFillPlugin);
+
+export default defineConfig({
   plugins: [sveltekit()],
   resolve: {
     alias: {
-      // This Rollup aliases are extracted from @esbuild-plugins/node-modules-polyfill,
-      // see https://github.com/remorses/esbuild-plugins/blob/master/node-modules-polyfill/src/polyfills.ts
       util: "rollup-plugin-node-polyfills/polyfills/util",
       sys: "util",
       events: "rollup-plugin-node-polyfills/polyfills/events",
@@ -60,14 +64,7 @@ const config: UserConfig = {
   build: {
     target: "es2020",
     rollupOptions: {
-      plugins: [
-        // Enable rollup polyfills plugin
-        // used during production bundling
-        builtins(),
-        rollupNodePolyFill(),
-      ],
+      plugins: [...(plugins as any)],
     },
   },
-};
-
-export default config;
+});

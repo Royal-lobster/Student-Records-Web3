@@ -2,8 +2,7 @@
   import { disconnect } from "$lib/shared/disconnect";
   import { shortenAddress } from "$lib/shared/utils";
   import { signerAddress } from "svelte-ethers-store";
-  import Loader4Line from "svelte-remixicon/lib/icons/Loader4Line.svelte";
-  import LogoutCircleRLine from "svelte-remixicon/lib/icons/LogoutCircleRLine.svelte";
+  import { Loader4Line, LogoutCircleRLine } from "svelte-remixicon";
 </script>
 
 {#if signerAddress}
