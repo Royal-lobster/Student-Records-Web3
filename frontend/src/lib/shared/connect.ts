@@ -22,13 +22,14 @@ export const web3authModalOpen = writable(false);
 export const connect = async () => {
   const auth = await web3auth();
   web3authStore.set(auth);
+
   web3authModalOpen.set(true);
   await auth.initModal();
-  const web3authProvider = await auth.connect();
-  console.log("web3authProvider", web3authProvider);
-  if (web3authProvider) {
-    defaultEvmStores.setProvider(new providers.Web3Provider(web3authProvider));
-  }
   web3authModalOpen.set(false);
+
+  const web3authProvider = await auth.connect();
+  if (web3authProvider)
+    defaultEvmStores.setProvider(new providers.Web3Provider(web3authProvider));
+
   localStorage.setItem("connected", "true");
 };
