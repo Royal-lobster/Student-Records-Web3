@@ -45,3 +45,9 @@
   --bg1: #5c5656 !important;
   --bg2: #e9e7e7 !important;
 }
+#w3a-modal .w3a-spinner {
+  background: conic-gradient(transparent, #413e3e) !important;
+}
+#w3a-modal .w3a-spinner__head {
+  background-color: #413e3e !important;
+}

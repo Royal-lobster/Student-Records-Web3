@@ -1,6 +1,8 @@
 import { utils, providers } from "ethers";
 import { config } from "$lib/config";
 import { defaultEvmStores } from "svelte-ethers-store";
+import { writable } from "svelte/store";
+import type { Web3Auth } from "@web3auth/web3auth";
 
 export const web3auth = async () => {
   const { Web3Auth } = await import("@web3auth/web3auth");
@@ -14,8 +16,11 @@ export const web3auth = async () => {
   });
 };
 
+export const web3authStore = writable<Web3Auth | null>(null);
+
 export const connect = async () => {
   const auth = await web3auth();
+  web3authStore.set(auth);
   await auth.initModal();
   const web3authProvider = await auth.connect();
   console.log("web3authProvider", web3authProvider);
