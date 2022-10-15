@@ -2,12 +2,13 @@ import { browser } from "$app/environment";
 import { goto } from "$app/navigation";
 import { chainId, defaultEvmStores } from "svelte-ethers-store";
 import { config } from "$lib/config";
+import { connect } from "./connect";
 
 export const connectionGuard = () => {
   if (!browser) return;
 
-  if (localStorage.getItem("connected") === "metamask") {
-    defaultEvmStores.setProvider();
+  if (localStorage.getItem("connected") === "true") {
+    connect();
     return;
   }
 

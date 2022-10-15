@@ -11,7 +11,7 @@
 }
 
 #nprogress .bar {
-  background: #b845a1;
+  background: #637e69;
   position: fixed;
   z-index: 1031;
   top: 0;
@@ -27,4 +27,21 @@
 
 .nprogress-custom-parent #nprogress .bar {
   position: absolute;
+}
+
+/* =============================== */
+/* ======== CONNECT MODAL ======== */
+/* =============================== */
+
+#w3a-modal.w3a-modal--light .w3a-text-field {
+  border: 1px solid #e6e6e6 !important;
+  box-shadow: none !important;
+}
+.w3a-header__title,
+.w3a-header__subtitle {
+  color: #e9e7e7 !important;
+}
+#w3a-modal {
+  --bg1: #5c5656 !important;
+  --bg2: #e9e7e7 !important;
 }

@@ -1,9 +1,8 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { config } from "$lib/config";
-  //@ts-ignore
-  import WalletConnectProvider from "@walletconnect/web3-provider/dist/umd/index.min";
-  import { providers } from "ethers";
+  import { connect } from "$lib/shared/connect";
+
   import {
     defaultEvmStores,
     connected,
@@ -18,37 +17,9 @@
     const urlParams = new URLSearchParams(window.location.search);
     redirectPath = urlParams.get("redirect");
   }
-  let redirectProgress = 0;
 
-  const handleWalletConnectClick = async (type: string) => {
-    switch (type) {
-      case "walletconnect":
-        const provider = new WalletConnectProvider({
-          rpc: {
-            1: "https://rpc-mumbai.matic.today",
-          },
-        });
-        await provider.enable();
-        const web3Provider = new providers.Web3Provider(provider);
-        defaultEvmStores.setProvider(web3Provider);
-        break;
-      case "metamask":
-        defaultEvmStores.setProvider();
-      default:
-        break;
-    }
-    localStorage.setItem("connected", type);
-  };
-
-  const handleRedirect = async () => {
-    for (let i = 0; i < 100; i++) {
-      redirectProgress = i;
-      await new Promise((resolve) => setTimeout(resolve, 5));
-    }
-    if (redirectPath) goto(redirectPath);
-  };
-
-  $: if ($connected && $chainId === config.chainId) handleRedirect();
+  $: if (redirectPath && $connected && $chainId === config.chainId)
+    goto(redirectPath);
 </script>
 
 <div class="grid place-content-center min-h-screen">
@@ -89,29 +60,10 @@
     {:else}
       <h1 class="font-extrabold text-5xl">Connect to the Application</h1>
       <p>
-        To use this application you need to connect to your ethereum wallet. if
-        you don't have one you can install <a
-          href="https://metamask.io/download/">Metamask extention</a
-        >
+        Click on the button below to connet to the application. You can login
+        with any of your social media account or with your wallet.
       </p>
-      <button
-        class="btn gap-2"
-        on:click={() => handleWalletConnectClick("metamask")}>Metamask</button
-      >
-      <button
-        class="btn gap-2"
-        on:click={() => handleWalletConnectClick("walletconnect")}
-        >Wallet Connect</button
-      >
-    {/if}
-
-    {#if redirectProgress && redirectPath}
-      <div>Redirecting back to {redirectPath}</div>
-      <progress
-        class="progress w-full progress-accent"
-        value={redirectProgress}
-        max="100"
-      />
+      <button class="btn gap-2" on:click={connect}>Connect</button>
     {/if}
   </div>
 </div>

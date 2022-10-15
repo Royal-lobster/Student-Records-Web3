@@ -18,7 +18,7 @@
       />
       <div class="pr-4 w-24">
         <div class="text-xs">CONNECTED</div>
-        <div class="text-sm font-bold">{shortenAddress($signerAddress)}</div>
+        <div class="text-xs font-bold">{shortenAddress($signerAddress)}</div>
       </div>
     {:else}
       <Loader4Line class="w-10 h-10 animate-spin" />

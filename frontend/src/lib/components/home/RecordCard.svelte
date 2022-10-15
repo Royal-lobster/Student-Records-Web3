@@ -26,7 +26,9 @@
   };
 </script>
 
-<div class="card rounded-md bg-base-200 flex flex-col p-8">
+<div
+  class="card border-l-8 border-l-primary rounded-md bg-base-200 flex flex-col p-8"
+>
   <div class="flex justify-between gap-4">
     <div class="flex flex-col gap-2">
       <h2 class="font-bold text-2xl">{record.name}</h2>
@@ -50,7 +52,7 @@
       </button>
       <button
         on:click={toggleDeleteModal}
-        class="btn btn-secondary btn-square fill-white"
+        class="btn btn-error btn-square fill-white"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
