@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { contractTransact } from "$lib/shared/contract-transact";
   import { truncate } from "$lib/shared/utils";
   import type { RecordDetailsFull } from "$lib/types";
@@ -39,7 +40,10 @@
       </div>
     </div>
     <div class="flex gap-2 flex-col lg:flex-row">
-      <button class="btn btn-primary btn-square fill-white">
+      <button
+        on:click={() => goto(`/record/${record.id}`)}
+        class="btn btn-primary btn-square fill-white"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"

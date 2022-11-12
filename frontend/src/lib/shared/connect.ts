@@ -6,7 +6,6 @@ import type { Web3Auth } from "@web3auth/web3auth";
 
 export const web3auth = async () => {
   const { Web3Auth } = await import("@web3auth/web3auth");
-  console.log({ chainid: utils.hexlify(config.chainId) });
   return new Web3Auth({
     clientId: config.web3AuthClientId,
     chainConfig: {
