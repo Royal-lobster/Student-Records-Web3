@@ -1,8 +1,17 @@
 <script>
   import { disconnect } from "$lib/shared/disconnect";
   import { shortenAddress } from "$lib/shared/utils";
+  import { toast } from "$lib/store/toast";
   import { signerAddress } from "svelte-ethers-store";
   import { Loader4Line, LogoutCircleRLine } from "svelte-remixicon";
+
+  const handleCopyAddress = () => {
+    navigator.clipboard.writeText($signerAddress);
+    toast({
+      message: "Address copied to clipboard",
+      type: "success",
+    });
+  };
 </script>
 
 {#if signerAddress}
@@ -17,7 +26,13 @@
       />
       <div class="pr-4 w-24">
         <div class="text-xs">CONNECTED</div>
-        <div class="text-xs font-bold">{shortenAddress($signerAddress)}</div>
+        <div
+          class="text-xs font-bold cursor-pointer"
+          on:keypress={handleCopyAddress}
+          on:click={handleCopyAddress}
+        >
+          {shortenAddress($signerAddress)}
+        </div>
       </div>
     {:else}
       <Loader4Line class="w-10 h-10 animate-spin" />
