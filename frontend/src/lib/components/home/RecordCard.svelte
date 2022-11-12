@@ -28,7 +28,7 @@
 </script>
 
 <div
-  class="card border-l-8 border-l-primary rounded-md bg-base-200 flex flex-col p-8"
+  class="card border-l-8 border-l-primary rounded-none bg-white/60 flex flex-col p-8"
 >
   <div class="flex justify-between gap-4">
     <div class="flex flex-col gap-2">

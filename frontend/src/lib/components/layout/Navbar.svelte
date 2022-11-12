@@ -5,9 +5,9 @@
 </script>
 
 <div
-  class="flex justify-between flex-wrap items-center w-full mb-16 gap-6 mt-10 "
+  class="flex justify-between flex-wrap items-center w-full mb-16 gap-6 mt-10 border-b-[1px] border-black/10 pb-4"
 >
-  <h1 class="font-extrabold text-4xl">{name && `📚 ${name}`}</h1>
+  <h1 class="font-light text-3xl md:text-4xl">{name && `📚 ${name}`}</h1>
   <div class="flex gap-4  justify-between md:justify-end w-full sm:w-auto">
     <ConnectedUser />
     {#if showAddRecord}

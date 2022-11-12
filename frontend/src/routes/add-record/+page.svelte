@@ -36,9 +36,9 @@
   };
 </script>
 
-<Navbar />
+<Navbar name="Add Record" />
 
-<div class="grid place-content-center ">
+<div class="grid place-content-center pb-10">
   <div class=" flex flex-col gap-6 max-w-md">
     <button
       class="flex items-center gap-2 text-gray-500 hover:opacity-70"
