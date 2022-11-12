@@ -14,12 +14,12 @@
   <div>
     <table class="table table-compact divide-y-[1px] divide-gray-300">
       <tr>
-        <td class="text-gray-500">Maintainer</td>
-        <td>{shortenAddress(record.maintainer)}</td>
+        <td class="text-gray-500">Record ID</td>
+        <td>{record.id}</td>
       </tr>
       <tr>
-        <td class="text-gray-500">ID</td>
-        <td>{record.id}</td>
+        <td class="text-gray-500">Maintainer</td>
+        <td>{shortenAddress(record.maintainer)}</td>
       </tr>
       <tr>
         <td class="text-gray-500">Entry Count</td>
