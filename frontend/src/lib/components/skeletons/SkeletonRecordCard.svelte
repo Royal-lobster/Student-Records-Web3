@@ -1,4 +1,4 @@
-<div class="border border-base-300 shadow rounded-md p-4 h-44 w-full mx-auto">
+<div class="border border-base-300 shadow rounded-none p-4 h-44 w-full mx-auto">
   <div class="animate-pulse flex space-x-4">
     <div class="flex-1 space-y-6 py-1">
       <div class="h-4 bg-base-300 rounded" />
