@@ -1,6 +1,6 @@
 import { browser } from "$app/environment";
 import { goto } from "$app/navigation";
-import { chainId, defaultEvmStores } from "svelte-ethers-store";
+import { chainId } from "svelte-ethers-store";
 import { config } from "$lib/config";
 import { connect } from "./connect";
 

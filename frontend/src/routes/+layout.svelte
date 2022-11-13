@@ -20,7 +20,7 @@
   }
 </script>
 
-<div class="container mx-auto px-5">
+<div class="container max-w-7xl mx-auto px-5">
   <slot />
   {#if $toastData}
     <Toast type={$toastData.type}>
