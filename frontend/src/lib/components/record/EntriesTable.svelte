@@ -20,8 +20,11 @@
       entries.map(async ([recipient, acknowledged, ipfsHash]) => {
         const ipfsData = await fetch(
           `https://${ipfsHash}.ipfs.cf-ipfs.com/data.json`
-        ).then((res) => res.json());
-        console.log(ipfsData);
+        ).then((res) => {
+          return res.json();
+        });
+        console.log(ipfsHash);
+
         return {
           recipient,
           acknowledged,
@@ -101,23 +104,37 @@
     </thead>
     <tbody>
       {#if entries.length !== 0}
-        {#each data as entry, i}
-          <tr class="children:max-w-xs children:overflow-x-scroll">
-            <th>{i + 1}</th>
+        {#if data.length !== 0}
+          {#each data as entry, i}
+            <tr class="children:max-w-xs children:overflow-x-scroll">
+              <th>{i + 1}</th>
+              <td
+                class="flex items-center gap-2 cursor-pointer"
+                on:keypress={() => copyToClipboard(entry.recipient)}
+                on:click={() => copyToClipboard(entry.recipient)}
+              >
+                <FileCopyLine class="inline-block" />
+                {shortenAddress(entry.recipient)}</td
+              >
+              {#each Object.values(ipfsDataKeys) as key}
+                <td>{entry[key]}</td>
+              {/each}
+              <td>{entry.acknowledged ? "Yes" : "No"}</td>
+            </tr>
+          {/each}
+        {:else}
+          <tr>
             <td
-              class="flex items-center gap-2 cursor-pointer"
-              on:keypress={() => copyToClipboard(entry.recipient)}
-              on:click={() => copyToClipboard(entry.recipient)}
+              colspan={Object.values(ipfsDataKeys).length + 3}
+              class="text-center h-60 bg-black/5"
             >
-              <FileCopyLine class="inline-block" />
-              {shortenAddress(entry.recipient)}</td
-            >
-            {#each Object.values(ipfsDataKeys) as key}
-              <td>{entry[key]}</td>
-            {/each}
-            <td>{entry.acknowledged ? "Yes" : "No"}</td>
+              <div class=" flex flex-col justify-center items-center">
+                <progress class="progress w-56" />
+                <h3 class="mt-4">Fetching onchain data</h3>
+              </div>
+            </td>
           </tr>
-        {/each}
+        {/if}
       {:else}
         <tr>
           <td
