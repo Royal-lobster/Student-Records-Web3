@@ -157,6 +157,15 @@ contract Records {
     }
 
     /*
+     * @dev Get entries.
+     * @param _recordId The id of the record.
+     * @return The list of entries.
+     */
+    function getEntries(uint _recordId) public view returns (Entry[] memory) {
+        return _entries[_recordId];
+    }
+
+    /*
      * @dev Get an entry.
      * @param _recordId The id of the record.
      * @param _entryId The id of the entry.

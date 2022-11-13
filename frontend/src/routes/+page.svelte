@@ -32,6 +32,8 @@
     );
     if (records.length === 0) records = null;
   };
+
+  console.log(records);
 </script>
 
 <Navbar name="Your Records" showAddRecord />
@@ -42,7 +44,7 @@
         <RecordCard {record} on:remove={recordRemoved} />
       {/each}
     </div>
-  {:else if records === null}
+  {:else if records === null || records.length === 0}
     <div
       class="flex flex-col gap-10 items-center w-[560px] max-w-[90vw] justify-center absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]"
     >

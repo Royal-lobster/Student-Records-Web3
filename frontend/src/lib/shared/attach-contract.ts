@@ -20,6 +20,6 @@ export const attachRecordContract = () => {
     "recordsContract",
     config.contractAddress,
     JSON.stringify(records.abi),
-    browser && !localStorage.getItem("connected")
+    !(browser && !localStorage.getItem("connected"))
   );
 };
