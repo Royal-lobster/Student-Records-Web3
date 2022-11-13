@@ -39,6 +39,7 @@
     "nprogress": "^0.2.0",
     "rollup-plugin-node-builtins": "^2.1.2",
     "svelte-ethers-store": "^2.5.8",
-    "svelte-remixicon": "^1.0.1"
+    "svelte-remixicon": "^1.0.1",
+    "web3.storage": "^4.4.0"
   }
 }

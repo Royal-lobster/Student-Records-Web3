@@ -1,15 +1,36 @@
 <script lang="ts">
   import { contractTransact } from "$lib/shared/contract-transact";
+  import { shortenAddress } from "$lib/shared/utils";
   import { toast } from "$lib/store/toast";
-  import { ipfsDataKeys } from "$lib/types";
+  import { ipfsDataKeys, type EntriesExpanded } from "$lib/types";
   import type { ContractReceipt } from "ethers";
+  import { FileCopyLine } from "svelte-remixicon";
   import Modal from "../elements/Modal.svelte";
   import TransactionSummaryTable from "../elements/TransactionSummaryTable.svelte";
 
-  export let entries: any;
+  export let entries: Array<[string, boolean, string]>;
   export let recordID: string;
-  let entrySubmitBtn: HTMLButtonElement;
 
+  // CONVERT ENTRIES TO TABLE DATA =====================
+  let data: EntriesExpanded[] = [];
+  $: (async () => {
+    data = await Promise.all(
+      entries.map(async ([recipient, acknowledged, ipfsHash]) => {
+        const ipfsData = await fetch(
+          `https://${ipfsHash}.ipfs.cf-ipfs.com/data.json`
+        ).then((res) => res.json());
+        console.log(ipfsData);
+        return {
+          recipient,
+          acknowledged,
+          ...ipfsData,
+        };
+      })
+    );
+  })();
+
+  // ADD ENTRIES LOGIC =================================
+  let entrySubmitBtn: HTMLButtonElement;
   let isModalOpen = false;
   let activeStep = 0;
   let addEntryResponse: ContractReceipt | null = null;
@@ -53,43 +74,53 @@
       activeStep = 2;
     }
   };
+
+  // COPY TO CLIPBOARD ===============================
+  let copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      message: "Copied to clipboard",
+      type: "success",
+    });
+  };
 </script>
 
-<div class="max-w-screen mt-10 overflow-x-scroll">
-  <table class="table">
+<div class="overflow-x-scroll">
+  <table class="table mt-10 table-compact md:table-normal">
     <thead>
       <tr>
+        <th />
         <th>Recipient</th>
         {#each Object.values(ipfsDataKeys) as key}
           <th>{key}</th>
         {/each}
-        <th>acknowledged</th>
+        <th>Acknowledged</th>
       </tr>
     </thead>
     <tbody>
-      {#if entries.length}
-        {#each entries as entry}
-          <tr>
-            <td>{entry}</td>
-            <td>TODO</td>
-          </tr>
-        {/each}
-      {:else}
-        <tr>
+      {#each data as entry, i}
+        <tr class="children:max-w-xs children:overflow-x-scroll">
+          <th>{i + 1}</th>
           <td
-            colspan={Object.values(ipfsDataKeys).length + 2}
-            class="text-center h-52 bg-neutral/5"
+            class="flex items-center gap-2 cursor-pointer"
+            on:keypress={() => copyToClipboard(entry.recipient)}
+            on:click={() => copyToClipboard(entry.recipient)}
           >
-            No entries found
-          </td>
+            <FileCopyLine class="inline-block" />
+            {shortenAddress(entry.recipient)}</td
+          >
+          {#each Object.values(ipfsDataKeys) as key}
+            <td>{entry[key]}</td>
+          {/each}
+          <td>{entry.acknowledged ? "Yes" : "No"}</td>
         </tr>
-      {/if}
+      {/each}
     </tbody>
   </table>
-  <button class="btn btn-primary mt-4" on:click={toggleModalOpen}
-    >Add Entry</button
-  >
 </div>
+<button class="btn btn-primary mt-4" on:click={toggleModalOpen}
+  >Add Entry</button
+>
 
 <Modal
   open={isModalOpen}
@@ -100,11 +131,7 @@
     ? "Processing Transaction"
     : "Transaction Successful"}
   secondaryText={activeStep === 0 ? "Cancel" : undefined}
-  primaryText={activeStep === 0
-    ? "Cancel"
-    : activeStep === 2
-    ? "Yay!"
-    : undefined}
+  primaryText={activeStep === 0 ? "Add" : activeStep === 2 ? "Yay!" : undefined}
   primaryAction={activeStep === 0
     ? () => entrySubmitBtn.click()
     : activeStep === 2

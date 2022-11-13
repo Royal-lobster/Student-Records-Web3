@@ -13,6 +13,19 @@ export type RecordDetailsFull = {
   id: number;
 };
 
+export type Entries = {
+  recipient: string;
+  ipfsHash: string;
+  acknowledged: boolean;
+};
+
+export type EntriesExpanded = {
+  [key in ipfsDataKeys]: string;
+} & {
+  recipient: string;
+  acknowledged: boolean;
+};
+
 export enum ipfsDataKeys {
   Name = "Name",
   Email = "Email",
