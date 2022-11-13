@@ -21,6 +21,7 @@ export const contractTransact = async (
             message: (e as any).message,
             type: "error",
           });
+          console.error({ type: "ERROR IN CONTRACT TRANSACT", message: e });
           resolve(null);
         }
       });
