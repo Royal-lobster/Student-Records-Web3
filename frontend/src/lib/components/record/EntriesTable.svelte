@@ -107,7 +107,7 @@
         {#if data.length !== 0}
           {#each data as entry, i}
             <tr
-              class="children:max-w-[20px] children:overflow-x-scroll children:scrollbar-hide"
+              class="children:max-w-xs children:overflow-x-scroll children:scrollbar-hide"
             >
               <th>{i + 1}</th>
               <td
