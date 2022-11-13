@@ -4,12 +4,14 @@
   import { toast } from "$lib/store/toast";
   import { ipfsDataKeys, type EntriesExpanded } from "$lib/types";
   import type { ContractReceipt } from "ethers";
-  import { FileCopyLine } from "svelte-remixicon";
+  import { signerAddress } from "svelte-ethers-store";
+  import { AddCircleLine, FileCopyLine } from "svelte-remixicon";
   import Modal from "../elements/Modal.svelte";
   import TransactionSummaryTable from "../elements/TransactionSummaryTable.svelte";
 
   export let entries: Array<[string, boolean, string]>;
   export let recordID: string;
+  export let recordMaintainer: string;
 
   // CONVERT ENTRIES TO TABLE DATA =====================
   let data: EntriesExpanded[] = [];
@@ -98,29 +100,43 @@
       </tr>
     </thead>
     <tbody>
-      {#each data as entry, i}
-        <tr class="children:max-w-xs children:overflow-x-scroll">
-          <th>{i + 1}</th>
+      {#if entries.length !== 0}
+        {#each data as entry, i}
+          <tr class="children:max-w-xs children:overflow-x-scroll">
+            <th>{i + 1}</th>
+            <td
+              class="flex items-center gap-2 cursor-pointer"
+              on:keypress={() => copyToClipboard(entry.recipient)}
+              on:click={() => copyToClipboard(entry.recipient)}
+            >
+              <FileCopyLine class="inline-block" />
+              {shortenAddress(entry.recipient)}</td
+            >
+            {#each Object.values(ipfsDataKeys) as key}
+              <td>{entry[key]}</td>
+            {/each}
+            <td>{entry.acknowledged ? "Yes" : "No"}</td>
+          </tr>
+        {/each}
+      {:else}
+        <tr>
           <td
-            class="flex items-center gap-2 cursor-pointer"
-            on:keypress={() => copyToClipboard(entry.recipient)}
-            on:click={() => copyToClipboard(entry.recipient)}
+            colspan={Object.values(ipfsDataKeys).length + 3}
+            class="text-center h-32 bg-black/5"
           >
-            <FileCopyLine class="inline-block" />
-            {shortenAddress(entry.recipient)}</td
-          >
-          {#each Object.values(ipfsDataKeys) as key}
-            <td>{entry[key]}</td>
-          {/each}
-          <td>{entry.acknowledged ? "Yes" : "No"}</td>
+            No entries yet
+          </td>
         </tr>
-      {/each}
+      {/if}
     </tbody>
   </table>
 </div>
-<button class="btn btn-primary mt-4" on:click={toggleModalOpen}
-  >Add Entry</button
->
+{#if $signerAddress === recordMaintainer}
+  <button class="btn gap-2 btn-primary mt-4" on:click={toggleModalOpen}>
+    <AddCircleLine class="inline-block" size="20" />
+    Add Entry</button
+  >
+{/if}
 
 <Modal
   open={isModalOpen}

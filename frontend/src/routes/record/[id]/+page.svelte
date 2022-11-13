@@ -18,7 +18,11 @@
     {#await $contracts.recordsContract.getEntries(record.id)}
       <SkeletonEntriesTable />
     {:then entries}
-      <EntriesTable {entries} recordID={record.id} />
+      <EntriesTable
+        {entries}
+        recordID={record.id}
+        recordMaintainer={record.maintainer}
+      />
     {/await}
   {/await}
 {:else}

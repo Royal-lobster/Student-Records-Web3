@@ -27,8 +27,10 @@ export const actions: Actions = {
     });
 
     const cid = await client.put([jsonFile]);
-
     console.log("PINNED: ", cid);
+
+    // used to populate cloudflare cache on pined json data
+    fetch(`https://${cid}.ipfs.cf-ipfs.com/data.json`);
 
     return { ipfsHash: cid };
   },
