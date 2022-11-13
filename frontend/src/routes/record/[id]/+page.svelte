@@ -3,6 +3,7 @@
   import Navbar from "$lib/components/layout/Navbar.svelte";
   import EntriesTable from "$lib/components/record/EntriesTable.svelte";
   import RecordPageHeader from "$lib/components/record/RecordPageHeader.svelte";
+  import SkeletonEntriesTable from "$lib/components/skeletons/SkeletonEntriesTable.svelte";
   import SkeletonRecordPageHeader from "$lib/components/skeletons/SkeletonRecordPageHeader.svelte";
   import { contracts } from "svelte-ethers-store";
 </script>
@@ -15,11 +16,12 @@
   {:then record}
     <RecordPageHeader {record} />
     {#await $contracts.recordsContract.getEntries(record.id)}
-      loading...
+      <SkeletonEntriesTable />
     {:then entries}
       <EntriesTable {entries} recordID={record.id} />
     {/await}
   {/await}
 {:else}
   <SkeletonRecordPageHeader />
+  <SkeletonEntriesTable />
 {/if}
