@@ -8,6 +8,7 @@ module.exports = {
     require("daisyui"),
     function ({ addVariant }) {
       addVariant("children", "& > *");
+      require("tailwind-scrollbar-hide");
     },
   ],
 };
