@@ -18,7 +18,6 @@
     <SkeletonRecordPageHeader />
   {:then record}
     <RecordPageHeader {record} />
-    {console.log($contracts.recordsContract)}
     {#await $contracts.recordsContract.getEntries(record.id)}
       loading...
     {:then entries}
