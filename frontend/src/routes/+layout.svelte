@@ -5,6 +5,9 @@
   //@ts-ignore
   import NProgress from "nprogress";
   import { navigating } from "$app/stores";
+  import { attachRecordContract } from "$lib/shared/attach-contract";
+
+  attachRecordContract();
 
   NProgress.configure({
     minimum: 0.16,

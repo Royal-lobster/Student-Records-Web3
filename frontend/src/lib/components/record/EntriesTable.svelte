@@ -1,25 +1,57 @@
 <script lang="ts">
+  import { contractTransact } from "$lib/shared/contract-transact";
+  import { toast } from "$lib/store/toast";
+  import { ipfsDataKeys } from "$lib/types";
+  import type { ContractReceipt } from "ethers";
   import Modal from "../elements/Modal.svelte";
+  import TransactionSummaryTable from "../elements/TransactionSummaryTable.svelte";
 
   export let entries: any;
-  let addEntryFrom: HTMLFormElement;
-
-  const ipfsDataKeys = ["Name", "Email", "Company", "Designation", "Package"];
+  export let recordID: string;
+  let entrySubmitBtn: HTMLButtonElement;
 
   let isModalOpen = false;
+  let activeStep = 0;
+  let addEntryResponse: ContractReceipt | null = null;
   let toggleModalOpen = () => (isModalOpen = !isModalOpen);
 
-  let handleEntriesSubmit = () => {
-    const formData = new FormData(addEntryFrom);
-    const data = Object.fromEntries(formData);
-    const recipientAddr = data["RECIPIENT_ETH_ADDR"];
-    const ipfsData = Object.fromEntries(
-      Object.entries(data).filter(([key]) => ipfsDataKeys.includes(key))
-    );
+  let handleEntriesSubmit = async (event: Event) => {
+    activeStep = 1;
 
-    //TODO: send ipfsData to IPFS and get the hash
+    // send ipfsData to IPFS and get the hash
+    const formData = new FormData(event.target as HTMLFormElement);
+    const response = await fetch((event.target as HTMLFormElement).action, {
+      method: "POST",
+      body: formData,
+    });
+    const result = await response.json();
+    if (result.type !== "success") {
+      toggleModalOpen();
+      toast({
+        message: "Failed to submit entry",
+        type: "error",
+      });
+    }
 
-    //TODO: send the hash, recipient to the contract
+    // send the hash, recipient to the contract
+    const recipientAddr = formData.get("RECIPIENT_ETH_ADDR");
+    const ipfsHash = result.data.ipfsHash;
+
+    addEntryResponse = await contractTransact("addEntry", [
+      recordID,
+      recipientAddr,
+      ipfsHash,
+    ]);
+
+    if (addEntryResponse?.status === 0) {
+      toggleModalOpen();
+      toast({
+        message: "Failed to submit entry",
+        type: "error",
+      });
+    } else if (addEntryResponse) {
+      activeStep = 2;
+    }
   };
 </script>
 
@@ -28,7 +60,7 @@
     <thead>
       <tr>
         <th>Recipient</th>
-        {#each ipfsDataKeys as key}
+        {#each Object.values(ipfsDataKeys) as key}
           <th>{key}</th>
         {/each}
         <th>acknowledged</th>
@@ -45,7 +77,7 @@
       {:else}
         <tr>
           <td
-            colspan={ipfsDataKeys.length + 2}
+            colspan={Object.values(ipfsDataKeys).length + 2}
             class="text-center h-52 bg-neutral/5"
           >
             No entries found
@@ -62,33 +94,68 @@
 <Modal
   open={isModalOpen}
   on:toggle={toggleModalOpen}
-  title="Create New Entry"
-  secondaryText="Cancel"
-  primaryText="Add"
-  primaryAction={handleEntriesSubmit}
+  title={activeStep === 0
+    ? "Create New Entry"
+    : activeStep === 1
+    ? "Processing Transaction"
+    : "Transaction Successful"}
+  secondaryText={activeStep === 0 ? "Cancel" : undefined}
+  primaryText={activeStep === 0
+    ? "Cancel"
+    : activeStep === 2
+    ? "Yay!"
+    : undefined}
+  primaryAction={activeStep === 0
+    ? () => entrySubmitBtn.click()
+    : activeStep === 2
+    ? () => window.location.reload()
+    : undefined}
 >
-  <form class="grid grid-cols-1 md:grid-cols-2 gap-4" bind:this={addEntryFrom}>
-    <div class="form-control">
-      <label class="label" for="name">Recipient</label>
-      <input
-        required
-        name="RECIPIENT_ETH_ADDR"
-        type="text"
-        placeholder="Enter Recipient Address"
-        class="input input-bordered"
-      />
-    </div>
-    {#each ipfsDataKeys as key}
+  {#if activeStep === 0}
+    <form
+      method="POST"
+      action="?/pinJSON"
+      class="grid grid-cols-1 md:grid-cols-2 gap-4"
+      on:submit|preventDefault={handleEntriesSubmit}
+    >
       <div class="form-control">
-        <label class="label" for="name">{key}</label>
+        <label class="label" for="name">Recipient</label>
         <input
           required
-          name={key}
+          name="RECIPIENT_ETH_ADDR"
+          pattern="0x[a-fA-F0-9]{`{40}`}"
           type="text"
-          placeholder="Enter {key}"
+          placeholder="Enter Recipient Address"
           class="input input-bordered"
         />
       </div>
-    {/each}
-  </form>
+      {#each Object.values(ipfsDataKeys) as key}
+        <div class="form-control">
+          <label class="label" for="name">{key}</label>
+          <input
+            required
+            name={key}
+            type={key === ipfsDataKeys.Package
+              ? "number"
+              : key === "Email"
+              ? "email"
+              : "text"}
+            placeholder="Enter {key}"
+            class="input input-bordered"
+          />
+        </div>
+      {/each}
+      <button type="submit" hidden bind:this={entrySubmitBtn} />
+    </form>
+  {:else if activeStep === 1}
+    <div class="flex flex-col items-center justify-center">
+      <p class="text-neutral/700 text-center">
+        Please wait while we process your transaction. We send the data to IPFS
+        and then send the hash to the contract. This may take a few seconds.
+      </p>
+      <progress class="progress w-56 mt-6" />
+    </div>
+  {:else if activeStep === 2}
+    <TransactionSummaryTable transactionResult={addEntryResponse} />
+  {/if}
 </Modal>

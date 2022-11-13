@@ -20,7 +20,7 @@
   };
 </script>
 
-{#if browser && window.localStorage.getItem("connected")}
+{#if browser && window.localStorage.getItem("connected") === "true"}
   <div
     class="flex w-[fit-content] flex-shrink-0 items-center gap-2 border rounded-full p-1 pr-4 border-gray-500/50"
   >

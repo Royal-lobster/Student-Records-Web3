@@ -1,11 +1,12 @@
 <script lang="ts">
+  import { browser } from "$app/environment";
   import { goto } from "$app/navigation";
   import { config } from "$lib/config";
   import { connect, web3authModalOpen } from "$lib/shared/connect";
   import { disconnect } from "$lib/shared/disconnect";
+  import { constants, ethers } from "ethers";
 
   import {
-    defaultEvmStores,
     connected,
     //@ts-ignore
     chainData,
@@ -14,18 +15,23 @@
   } from "svelte-ethers-store";
 
   let redirectPath: string | null = null;
-  if (typeof window !== "undefined") {
+  if (browser) {
     const urlParams = new URLSearchParams(window.location.search);
     redirectPath = urlParams.get("redirect");
   }
 
-  $: if (redirectPath && $connected && $chainId === config.chainId)
+  $: if (
+    redirectPath &&
+    $connected &&
+    $signerAddress !== constants.AddressZero &&
+    $chainId === config.chainId
+  )
     goto(redirectPath);
 </script>
 
 <div class="grid place-content-center min-h-screen">
   <div class=" flex flex-col gap-6 max-w-md">
-    {#if $connected}
+    {#if $connected && $signerAddress !== constants.AddressZero}
       {#if $chainId !== config.chainId}
         <h1 class="font-extrabold text-5xl">🚨 Wrong Network</h1>
         <p>

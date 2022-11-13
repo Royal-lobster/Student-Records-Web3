@@ -4,11 +4,7 @@
   import EntriesTable from "$lib/components/record/EntriesTable.svelte";
   import RecordPageHeader from "$lib/components/record/RecordPageHeader.svelte";
   import SkeletonRecordPageHeader from "$lib/components/skeletons/SkeletonRecordPageHeader.svelte";
-  import { attachRecordContract } from "$lib/shared/attach-contract";
-  import { id } from "ethers/lib/utils";
   import { contracts } from "svelte-ethers-store";
-
-  attachRecordContract();
 </script>
 
 <Navbar name="Record Details" />
@@ -21,7 +17,7 @@
     {#await $contracts.recordsContract.getEntries(record.id)}
       loading...
     {:then entries}
-      <EntriesTable {entries} />
+      <EntriesTable {entries} recordID={record.id} />
     {/await}
   {/await}
 {:else}

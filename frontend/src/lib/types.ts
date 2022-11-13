@@ -12,3 +12,11 @@ export type RecordDetailsFull = {
   maintainer: string;
   id: number;
 };
+
+export enum ipfsDataKeys {
+  Name = "Name",
+  Email = "Email",
+  Company = "Company",
+  Designation = "Designation",
+  Package = "Package (LPA)",
+}

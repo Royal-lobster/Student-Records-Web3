@@ -1,6 +1,5 @@
 <script lang="ts">
   import RecordCard from "$lib/components/home/RecordCard.svelte";
-  import { attachRecordContract } from "$lib/shared/attach-contract";
   import { connectionGuard } from "$lib/shared/connection-guard";
   import SkeletonRecordCard from "$lib/components/skeletons/SkeletonRecordCard.svelte";
   import { contracts, signerAddress } from "svelte-ethers-store";
@@ -11,7 +10,6 @@
   import Navbar from "$lib/components/layout/Navbar.svelte";
 
   $: connectionGuard();
-  attachRecordContract();
 
   let records: RecordDetailsFull[] | null = [];
 
