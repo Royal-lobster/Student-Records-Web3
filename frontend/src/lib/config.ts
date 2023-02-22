@@ -1,5 +1,5 @@
 export const config = {
-  contractAddress: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  contractAddress: "0xc30376606Ab4CBBF5F7233B29eBbB2504B35F203",
   chainId: 80001,
   rpcUrl: "https://matic-mumbai.chainstacklabs.com/",
   web3AuthClientId:

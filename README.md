@@ -24,6 +24,9 @@ GAS_REPORT=true npx hardhat test
 
 # To deploy the smart contract on the local blockchain
 npx hardhat run scripts/deploy.ts
+
+# To deploy the smart contract on the mumbai testnet
+npx hardhat run scripts/deploy.ts --network mumbai
 ```
 
 Things you can run in frontend folder:
