@@ -41,7 +41,8 @@ describe("Records Contract", function () {
     const reciept = await (
       await DeployedRecordsContract.addRecord(
         firstRecordData.name,
-        firstRecordData.description
+        firstRecordData.description,
+        firstRecordData.ipfs_structure
       )
     ).wait();
     const recordId = getRecordId(reciept);
@@ -72,7 +73,8 @@ describe("Records Contract", function () {
     const { DeployedRecordsContract } = await deployTokenFixture();
     const recordIdTx = await DeployedRecordsContract.addRecord(
       firstRecordData.name,
-      firstRecordData.description
+      firstRecordData.description,
+      firstRecordData.ipfs_structure
     );
     const reciept = await recordIdTx.wait();
     const e = getRecordEvent(reciept);
@@ -195,7 +197,8 @@ describe("Records Contract", function () {
       const reciept = await (
         await DeployedRecordsContract.addRecord(
           recordData.name,
-          recordData.description
+          recordData.description,
+          firstRecordData.ipfs_structure
         )
       ).wait();
       const id = getRecordId(reciept);
@@ -235,7 +238,8 @@ describe("Records Contract", function () {
       await (
         await DeployedRecordsContract.addRecord(
           recordData.name,
-          recordData.description
+          recordData.description,
+          firstRecordData.ipfs_structure
         )
       ).wait();
     }
@@ -301,7 +305,8 @@ describe("Records Contract", function () {
       await DeployedRecordsContract.updateRecordDetails(
         recordId,
         newRecordData.name,
-        newRecordData.description
+        newRecordData.description,
+        firstRecordData.ipfs_structure
       )
     ).wait();
     const recordReadTx = await DeployedRecordsContract.getRecord(recordId);
@@ -315,7 +320,8 @@ describe("Records Contract", function () {
       DeployedRecordsContract.connect(addr2).updateRecordDetails(
         0,
         "SOME_NEW_NAME",
-        "SOME_NEW_DESCRIPTION"
+        "SOME_NEW_DESCRIPTION",
+        "SOME_NEW_IPFS_STRUCTURE"
       )
     ).to.be.revertedWith(
       "Only the maintainer can update the details of a record."
