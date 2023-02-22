@@ -17,6 +17,7 @@ describe("Records Contract", function () {
     name: "Workshop Grades for Central Metrics Examination",
     description:
       "Grades for Central Metrics Examination for all the students who took the exam",
+    ipfs_structure: "SOME_IPFS_HASH",
   };
 
   async function deployTokenFixture() {
@@ -177,6 +178,7 @@ describe("Records Contract", function () {
         name: "Student Attendance for Central Metrics Examination",
         description:
           "Attendance for Central Metrics Examination for all the students who took the exam",
+        ipfs_structure: "SOME_IPFS_HASH",
       },
       {
         name: "Grades for First Year Students",
@@ -215,15 +217,18 @@ describe("Records Contract", function () {
         name: "Student Attendance for Central Metrics Examination",
         description:
           "Attendance for Central Metrics Examination for all the students who took the exam",
+        ipfs_structure: "SOME_IPFS_HASH",
       },
       {
         name: "Grades for First Year Students",
         description:
           "Grades for First Year Students for all the students who took the exam",
+        ipfs_structure: "SOME_IPFS_HASH",
       },
       {
         name: "Grades for Second Year Students",
         description: "Grades for Second Year Students for all the students",
+        ipfs_structure: "SOME_IPFS_HASH",
       },
     ];
     for (const recordData of additionalRecordData) {
@@ -290,6 +295,7 @@ describe("Records Contract", function () {
       name: "Workshop Grades for Local Metrics Examination",
       description:
         "Grades for Local Metrics Examination for all the students who took the exam",
+      ipfs_structure: "SOME_IPFS_HASH",
     };
     await (
       await DeployedRecordsContract.updateRecordDetails(

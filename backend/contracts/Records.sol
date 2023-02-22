@@ -8,6 +8,7 @@ contract Records {
         string name;
         string description;
         address maintainer;
+        string ipfs_structure;
     }
 
     struct Entry {
@@ -40,7 +41,11 @@ contract Records {
      * @param _name The name of the record.
      * @param _description The description of the record.
      */
-    function addRecord(string memory _name, string memory _description) public {
+    function addRecord(
+        string memory _name,
+        string memory _description,
+        string memory _ipfs_structure
+    ) public {
         uint id = uint(
             keccak256(abi.encodePacked(block.timestamp, msg.sender)) >> 192
         ); // 20 digit id
@@ -48,7 +53,8 @@ contract Records {
             id: id,
             name: _name,
             description: _description,
-            maintainer: msg.sender
+            maintainer: msg.sender,
+            ipfs_structure: _ipfs_structure
         });
         _maintainer_records[msg.sender].push(id);
         emit RecordAdded(id, _name, _description, msg.sender);
@@ -126,11 +132,9 @@ contract Records {
      * @return The list of records the maintainer has.
      */
 
-    function getRecordsByMaintainer(address _maintainer)
-        public
-        view
-        returns (Record[] memory)
-    {
+    function getRecordsByMaintainer(
+        address _maintainer
+    ) public view returns (Record[] memory) {
         Record[] memory records = new Record[](
             _maintainer_records[_maintainer].length
         );
@@ -141,7 +145,9 @@ contract Records {
                 description: _records[_maintainer_records[_maintainer][i]]
                     .description,
                 maintainer: _records[_maintainer_records[_maintainer][i]]
-                    .maintainer
+                    .maintainer,
+                ipfs_structure: _records[_maintainer_records[_maintainer][i]]
+                    .ipfs_structure
             });
         }
         return records;
@@ -171,11 +177,10 @@ contract Records {
      * @param _entryId The id of the entry.
      * @return The entry.
      */
-    function getEntry(uint _recordId, uint _entryId)
-        public
-        view
-        returns (Entry memory)
-    {
+    function getEntry(
+        uint _recordId,
+        uint _entryId
+    ) public view returns (Entry memory) {
         return _entries[_recordId][_entryId];
     }
 
@@ -188,7 +193,8 @@ contract Records {
     function updateRecordDetails(
         uint _recordId,
         string memory _name,
-        string memory _description
+        string memory _description,
+        string memory _ipfs_structure
     ) public {
         require(
             _records[_recordId].maintainer == msg.sender,
@@ -196,6 +202,7 @@ contract Records {
         );
         _records[_recordId].name = _name;
         _records[_recordId].description = _description;
+        _records[_recordId].ipfs_structure = _ipfs_structure;
     }
 
     /*
@@ -203,9 +210,10 @@ contract Records {
      * @param _recordId The id of the record.
      * @param _maintainer The new maintainer of the record.
      */
-    function updateRecordMaintainer(uint _recordId, address _maintainer)
-        public
-    {
+    function updateRecordMaintainer(
+        uint _recordId,
+        address _maintainer
+    ) public {
         require(
             _records[_recordId].maintainer == msg.sender,
             "Only the maintainer can update the maintainer of a record."
