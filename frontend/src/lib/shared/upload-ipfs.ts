@@ -1,5 +1,5 @@
 import { WEB3STORAGE_TOKEN } from "$env/static/private";
-import { Web3Storage } from "web3.storage";
+import { File, Web3Storage } from "web3.storage";
 
 export const uploadToIPFS = async (ipfsData: Object) => {
   const client = new Web3Storage({

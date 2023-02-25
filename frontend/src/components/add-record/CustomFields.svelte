@@ -1,29 +1,36 @@
 <script lang="ts">
+  import { customFieldsStore } from "$lib/store/customFields";
   import { DeleteBinLine } from "svelte-remixicon";
-  export let customFields: { id: number; name: string; type: string }[];
 
-  const handleAddNewField = () => {
+  $: customFields = $customFieldsStore;
+
+  function handleAddNewField() {
     const id = customFields[customFields.length - 1]?.id + 1 || 0;
-    customFields = [...customFields, { id, name: "", type: "text" }];
-  };
+    customFieldsStore.update((fields) => [
+      ...fields,
+      { id, name: "", type: "text" },
+    ]);
+  }
 
-  const handleCustomFieldTypeChange = (id: number, event: Event) => {
+  function handleCustomFieldTypeChange(id: number, event: Event) {
     const type = (event.target as HTMLSelectElement).value;
-    customFields = customFields.map((field) =>
-      field.id === id ? { ...field, type } : field
+    customFieldsStore.update((fields) =>
+      fields.map((field) => (field.id === id ? { ...field, type } : field))
     );
-  };
+  }
 
-  const handleCustomFieldNameChange = (id: number, event: Event) => {
+  function handleCustomFieldNameChange(id: number, event: Event) {
     const name = (event.target as HTMLInputElement).value;
-    customFields = customFields.map((field) =>
-      field.id === id ? { ...field, name } : field
+    customFieldsStore.update((fields) =>
+      fields.map((field) => (field.id === id ? { ...field, name } : field))
     );
-  };
+  }
 
-  const handleCustomFieldDelete = (id: number) => {
-    customFields = customFields.filter((field) => field.id !== id);
-  };
+  function handleCustomFieldDelete(id: number) {
+    customFieldsStore.update((fields) =>
+      fields.filter((field) => field.id !== id)
+    );
+  }
 </script>
 
 <div class="max-w-md">
@@ -53,6 +60,7 @@
           <input
             name={`name-${customField.id}`}
             value={customField.name}
+            required
             on:change={(e) => handleCustomFieldNameChange(customField.id, e)}
             class="input input-sm input-bordered w-full"
             placeholder="Enter Column Name"
@@ -61,6 +69,7 @@
         <div class="flex-grow flex">
           <label class="mb-1" for={`type-${customField.id}`}>Type</label>
           <select
+            required
             name={`type-${customField.id}`}
             class="input input-sm input-bordered w-full"
             value={customField.type}

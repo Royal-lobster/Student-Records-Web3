@@ -11,35 +11,37 @@
   import { toast } from "$lib/store/toast";
   import CustomFields from "../../components/add-record/CustomFields.svelte";
   import RecordDetailsInput from "../../components/add-record/RecordDetailsInput.svelte";
+  import { writable } from "svelte/store";
+  import { customFieldsStore } from "$lib/store/customFields";
 
   $: connectionGuard();
 
   let loading = false;
   let isModalOpen = false;
   let transactionResult: ContractReceipt | null = null;
-  let customFields: { id: number; name: string; type: string }[] = [
-    {
-      id: 0,
-      name: "",
-      type: "text",
-    },
-  ];
 
   const toggleModalOpen = () => (isModalOpen = !isModalOpen);
 
   const handleAddRecordSubmit = async (e: Event) => {
     e.preventDefault();
+    loading = true;
+
+    const customFields = $customFieldsStore;
 
     // send custom fields data to ipfs
+    const filteredCustomFields = customFields.map((field) => ({
+      name: field.name,
+      type: field.type,
+    }));
+    const customFieldsFormData = new FormData();
+    customFieldsFormData.append("data", JSON.stringify(filteredCustomFields));
+
     const response = await fetch((e.target as HTMLFormElement).action, {
       method: "POST",
-      body: JSON.stringify(
-        customFields.map((field) => {
-          field.name, field.type;
-        })
-      ),
+      body: customFieldsFormData,
     });
     const result = await response.json();
+
     if (result.type !== "success") {
       toggleModalOpen();
       toast({
@@ -53,32 +55,37 @@
     const payload = Object.fromEntries(formData.entries()) as RecordDetails;
 
     // send transaction
-    loading = true;
     transactionResult = await contractTransact("addRecord", [
       payload.name,
       payload.description,
+      result.data.ipfsHash,
     ]);
-    loading = false;
 
     // reset form
     if (transactionResult) {
       toggleModalOpen();
       (e.target as HTMLFormElement).reset();
     }
+
+    loading = false;
   };
 </script>
 
 <Navbar name="Add Record" />
 
 <form
-  class="flex flex-col justify-center items-center"
+  class="flex flex-col justify-center mb-10 items-center"
+  method="POST"
+  action="?/pinJSON"
   on:submit={handleAddRecordSubmit}
 >
-  <div
-    class="flex flex-col mx-auto gap-4 w-full max-w-5xl lg:flex-row justify-between"
-  >
-    <RecordDetailsInput />
-    <CustomFields {customFields} />
+  <div class="w-full max-w-5xl mx-auto">
+    <div
+      class="flex lg:flex-row justify-between  max-w-md lg:max-w-none flex-col gap-4 mx-auto"
+    >
+      <RecordDetailsInput />
+      <CustomFields />
+    </div>
   </div>
 
   {#if !loading}
