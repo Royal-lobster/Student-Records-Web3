@@ -74,13 +74,15 @@
   class="flex flex-col justify-center items-center"
   on:submit={handleAddRecordSubmit}
 >
-  <div class="flex w-full justify-between">
+  <div
+    class="flex flex-col mx-auto gap-4 w-full max-w-5xl lg:flex-row justify-between"
+  >
     <RecordDetailsInput />
     <CustomFields {customFields} />
   </div>
 
   {#if !loading}
-    <button class="btn btn-primary mt-4 w-full max-w-lg mx-auto"
+    <button class="btn btn-primary mt-10 w-full max-w-md mx-auto"
       >Add Record</button
     >
   {:else}

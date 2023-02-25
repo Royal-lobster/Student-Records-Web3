@@ -26,7 +26,7 @@
   };
 </script>
 
-<div class="w-1/2">
+<div class="max-w-md">
   <h1 class="text-3xl mt-12 mb-4">Add Fields</h1>
   <div
     class="max-h-[270px] border border-[#bdbcbc] shadow-md p-4 pt-2 pb-6 rounded-md overflow-y-auto"
@@ -40,13 +40,15 @@
       </div>
     {/if}
     {#each customFields as customField}
-      <div class="flex mt-2 items-center children:flex children:flex-col gap-4">
-        <div class="my-auto border border-primary rounded-full w-6 h-6">
+      <div class="flex mt-2 items-center children:flex-col gap-4">
+        <div
+          class="hidden lg:flex my-auto border border-primary rounded-full w-6 h-6"
+        >
           <span class="text-center text-primary"
             >{customFields.indexOf(customField) + 1}</span
           >
         </div>
-        <div class="flex-grow">
+        <div class="flex-grow flex">
           <label class="mb-1" for={`name-${customField.id}`}>Column Name</label>
           <input
             name={`name-${customField.id}`}
@@ -56,7 +58,7 @@
             placeholder="Enter Column Name"
           />
         </div>
-        <div class="flex-grow">
+        <div class="flex-grow flex">
           <label class="mb-1" for={`type-${customField.id}`}>Type</label>
           <select
             name={`type-${customField.id}`}
