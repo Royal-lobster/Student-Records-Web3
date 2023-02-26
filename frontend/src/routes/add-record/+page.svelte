@@ -9,10 +9,9 @@
   import { getRecordId } from "$lib/shared/utils";
   import Navbar from "$lib/components/layout/Navbar.svelte";
   import { toast } from "$lib/store/toast";
-  import CustomFields from "../../components/add-record/CustomFields.svelte";
-  import RecordDetailsInput from "../../components/add-record/RecordDetailsInput.svelte";
-  import { writable } from "svelte/store";
   import { customFieldsStore } from "$lib/store/customFields";
+  import RecordDetailsInput from "$lib/components/add-record/RecordDetailsInput.svelte";
+  import CustomFields from "$lib/components/add-record/CustomFields.svelte";
 
   $: connectionGuard();
 
