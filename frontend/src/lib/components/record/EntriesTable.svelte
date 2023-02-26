@@ -2,7 +2,7 @@
   import { contractTransact } from "$lib/shared/contract-transact";
   import { shortenAddress } from "$lib/shared/utils";
   import { toast } from "$lib/store/toast";
-  import { ipfsDataKeys, type EntriesExpanded } from "$lib/types";
+  import type { EntriesExpanded } from "$lib/types";
   import type { ContractReceipt } from "ethers";
   import { signerAddress } from "svelte-ethers-store";
   import { AddCircleLine, FileCopyLine } from "svelte-remixicon";
@@ -12,6 +12,7 @@
   export let entries: Array<[string, boolean, string]>;
   export let recordID: string;
   export let recordMaintainer: string;
+  export let tableStructure: { name: string; type: string }[];
 
   // CONVERT ENTRIES TO TABLE DATA =====================
   let data: EntriesExpanded[] = [];
@@ -19,7 +20,7 @@
     data = await Promise.all(
       entries.map(async ([recipient, acknowledged, ipfsHash]) => {
         const ipfsData = await fetch(
-          `https://${ipfsHash}.ipfs.cf-ipfs.com/data.json`
+          `https://${ipfsHash}.ipfs.w3s.link/data.json`
         ).then((res) => {
           return res.json();
         });
@@ -96,8 +97,8 @@
       <tr>
         <th />
         <th>Recipient</th>
-        {#each Object.values(ipfsDataKeys) as key}
-          <th>{key}</th>
+        {#each tableStructure as field}
+          <th>{field.name}</th>
         {/each}
         <th>Acknowledged</th>
       </tr>
@@ -116,8 +117,8 @@
                 <FileCopyLine class="inline-block" />
                 {shortenAddress(entry.recipient)}</td
               >
-              {#each Object.values(ipfsDataKeys) as key}
-                <td>{entry[key]}</td>
+              {#each tableStructure as field}
+                <td>{entry[field.name]}</td>
               {/each}
               <td>{entry.acknowledged ? "Yes" : "No"}</td>
             </tr>
@@ -125,7 +126,7 @@
         {:else}
           <tr>
             <td
-              colspan={Object.values(ipfsDataKeys).length + 3}
+              colspan={tableStructure.length + 3}
               class="text-center h-60 bg-black/5"
             >
               <div class=" flex flex-col justify-center items-center">
@@ -138,7 +139,7 @@
       {:else}
         <tr>
           <td
-            colspan={Object.values(ipfsDataKeys).length + 3}
+            colspan={tableStructure.length + 3}
             class="text-center h-32 bg-black/5"
           >
             No entries yet
@@ -189,18 +190,14 @@
           class="input input-bordered"
         />
       </div>
-      {#each Object.values(ipfsDataKeys) as key}
+      {#each tableStructure as field, i}
         <div class="form-control">
-          <label class="label" for="name">{key}</label>
+          <label class="label" for="name">{field.name}</label>
           <input
             required
-            name={key}
-            type={key === ipfsDataKeys.Package
-              ? "number"
-              : key === "Email"
-              ? "email"
-              : "text"}
-            placeholder="Enter {key}"
+            name={`${field.name} [${i}]`}
+            type={field.type}
+            placeholder="Enter {field.name}"
             class="input input-bordered"
           />
         </div>

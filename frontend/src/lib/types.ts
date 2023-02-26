@@ -11,6 +11,7 @@ export type RecordDetailsFull = {
   description: string;
   maintainer: string;
   id: number;
+  ipfs_structure: string;
 };
 
 export type Entries = {
@@ -19,17 +20,7 @@ export type Entries = {
   acknowledged: boolean;
 };
 
-export type EntriesExpanded = {
-  [key in ipfsDataKeys]: string;
-} & {
+export type EntriesExpanded = Record<string, string> & {
   recipient: string;
   acknowledged: boolean;
 };
-
-export enum ipfsDataKeys {
-  Name = "Name",
-  Email = "Email",
-  Company = "Company",
-  Designation = "Designation",
-  Package = "Package (LPA)",
-}
