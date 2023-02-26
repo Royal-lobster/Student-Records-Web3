@@ -33,14 +33,14 @@
   }
 </script>
 
-<div class="max-w-md">
+<div class="max-w-lg w-full">
   <h1 class="text-3xl mt-12 mb-4">Add Fields</h1>
   <div
-    class="max-h-[270px] border border-[#bdbcbc] shadow-md p-4 pt-2 pb-6 rounded-md overflow-y-auto"
+    class="max-h-[295px] border border-[#bdbcbc] shadow-md p-4 pt-2 pb-6 rounded-md overflow-y-auto"
   >
     {#if customFields.length === 0}
       <div
-        class="text-center text-gray-500 h-full -mb-4 p-4 grid place-items-center"
+        class="text-center text-gray-500 h-full w-full -mb-4 p-4 grid place-items-center"
       >
         <h2 class="text-xl">No fields added yet.</h2>
         <p>Click on add field button to create new field.</p>

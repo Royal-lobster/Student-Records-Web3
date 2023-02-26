@@ -3,7 +3,7 @@
   import { ArrowLeftLine } from "svelte-remixicon";
 </script>
 
-<div class=" flex flex-col gap-6 max-w-md">
+<div class=" flex flex-col gap-6 max-w-lg">
   <button
     class="flex items-center gap-2 text-gray-500 hover:opacity-70"
     on:click={() => goto("/")}
@@ -29,7 +29,8 @@
       required
       name="description"
       placeholder="Type here"
-      class="textarea textarea-bordered w-full"
+      class="textarea textarea-bordered w-full leading-normal"
+      rows="4"
     />
   </div>
 </div>

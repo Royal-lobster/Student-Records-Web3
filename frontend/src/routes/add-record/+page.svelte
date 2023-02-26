@@ -81,7 +81,7 @@
 >
   <div class="w-full max-w-5xl mx-auto">
     <div
-      class="flex lg:flex-row justify-between  max-w-md lg:max-w-none flex-col gap-4 mx-auto"
+      class="flex lg:flex-row justify-between  max-w-md lg:max-w-none flex-col lg:gap-10 mx-auto"
     >
       <RecordDetailsInput />
       <CustomFields />
