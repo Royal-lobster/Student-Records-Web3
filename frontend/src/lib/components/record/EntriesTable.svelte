@@ -20,7 +20,7 @@
     data = await Promise.all(
       entries.map(async ([recipient, acknowledged, ipfsHash]) => {
         const ipfsData = await fetch(
-          `https://${ipfsHash}.ipfs.cf-ipfs.com/data.json`
+          `https://${ipfsHash}.ipfs.w3s.link/data.json`
         ).then((res) => {
           return res.json();
         });
@@ -64,11 +64,11 @@
     const recipientAddr = formData.get("RECIPIENT_ETH_ADDR");
     const ipfsHash = result.data.ipfsHash;
 
-    // addEntryResponse = await contractTransact("addEntry", [
-    //   recordID,
-    //   recipientAddr,
-    //   ipfsHash,
-    // ]);
+    addEntryResponse = await contractTransact("addEntry", [
+      recordID,
+      recipientAddr,
+      ipfsHash,
+    ]);
 
     if (addEntryResponse?.status === 0) {
       toggleModalOpen();
@@ -118,7 +118,7 @@
                 {shortenAddress(entry.recipient)}</td
               >
               {#each tableStructure as field}
-                <td>{field.name}</td>
+                <td>{entry[field.name]}</td>
               {/each}
               <td>{entry.acknowledged ? "Yes" : "No"}</td>
             </tr>
