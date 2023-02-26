@@ -11,6 +11,7 @@
   } from "svelte-remixicon";
 
   console.log($signerAddress);
+
   const handleCopyAddress = () => {
     navigator.clipboard.writeText($signerAddress);
     toast({

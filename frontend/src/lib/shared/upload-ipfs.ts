@@ -14,7 +14,7 @@ export const uploadToIPFS = async (ipfsData: Object) => {
   console.log("PINNED: ", cid);
 
   // used to populate cloudflare cache on pined json data
-  fetch(`https://${cid}.ipfs.cf-ipfs.com/data.json`);
+  fetch(`https://${cid}.ipfs.w3s.link/data.json`);
 
   return cid;
 };
