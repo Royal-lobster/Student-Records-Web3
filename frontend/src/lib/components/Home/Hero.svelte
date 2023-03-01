@@ -16,7 +16,7 @@
         reliability of blockchain and IPFS. Experience the peace of mind that
         comes with knowing your data is safe and accessible at all times.
       </p>
-      <button class="btn">Go to Dashboard</button>
+      <a href="/dashboard" class="btn">Go to Dashboard</a>
     </div>
     <div class="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
       <img

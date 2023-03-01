@@ -22,6 +22,14 @@
         <td>{shortenAddress(record.maintainer)}</td>
       </tr>
       <tr>
+        <td class="text-gray-500">Table Structure</td>
+        <td>
+          <a href={`https://${record.ipfs_structure}.ipfs.w3s.link/data.json`}
+            >{shortenAddress(record.ipfs_structure)}</a
+          ></td
+        >
+      </tr>
+      <tr>
         <td class="text-gray-500">Entry Count</td>
         {#await $contracts.recordsContract.getEntryCount($page.params.id)}
           <td>Loading...</td>

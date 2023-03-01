@@ -6,6 +6,16 @@
   import SkeletonEntriesTable from "$lib/components/skeletons/SkeletonEntriesTable.svelte";
   import SkeletonRecordPageHeader from "$lib/components/skeletons/SkeletonRecordPageHeader.svelte";
   import { contracts } from "svelte-ethers-store";
+
+  // GET IPFS DATA ====================================
+
+  const getTableStructure = async (ipfs_structure: string) => {
+    const response = await fetch(
+      `https://${ipfs_structure}.ipfs.w3s.link/data.json`
+    );
+    const result = await response.json();
+    return result as { name: string; type: string }[];
+  };
 </script>
 
 <Navbar name="Record Details" />
@@ -18,11 +28,16 @@
     {#await $contracts.recordsContract.getEntries(record.id)}
       <SkeletonEntriesTable />
     {:then entries}
-      <EntriesTable
-        {entries}
-        recordID={record.id}
-        recordMaintainer={record.maintainer}
-      />
+      {#await getTableStructure(record.ipfs_structure)}
+        <SkeletonEntriesTable />
+      {:then tableStructure}
+        <EntriesTable
+          {entries}
+          recordID={record.id}
+          recordMaintainer={record.maintainer}
+          {tableStructure}
+        />
+      {/await}
     {/await}
   {/await}
 {:else}

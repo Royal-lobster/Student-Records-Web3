@@ -7,80 +7,97 @@
   import TransactionSummaryTable from "$lib/components/elements/TransactionSummaryTable.svelte";
   import { goto } from "$app/navigation";
   import { getRecordId } from "$lib/shared/utils";
-  import { ArrowLeftLine } from "svelte-remixicon";
   import Navbar from "$lib/components/layout/Navbar.svelte";
+  import { toast } from "$lib/store/toast";
+  import { customFieldsStore } from "$lib/store/customFields";
+  import RecordDetailsInput from "$lib/components/add-record/RecordDetailsInput.svelte";
+  import CustomFields from "$lib/components/add-record/CustomFields.svelte";
 
   $: connectionGuard();
 
   let loading = false;
   let isModalOpen = false;
   let transactionResult: ContractReceipt | null = null;
+
   const toggleModalOpen = () => (isModalOpen = !isModalOpen);
 
   const handleAddRecordSubmit = async (e: Event) => {
     e.preventDefault();
+    loading = true;
+
+    const customFields = $customFieldsStore;
+
+    // send custom fields data to ipfs
+    const filteredCustomFields = customFields.map((field) => ({
+      name: field.name,
+      type: field.type,
+    }));
+    const customFieldsFormData = new FormData();
+    customFieldsFormData.append("data", JSON.stringify(filteredCustomFields));
+
+    const response = await fetch((e.target as HTMLFormElement).action, {
+      method: "POST",
+      body: customFieldsFormData,
+    });
+    const result = await response.json();
+
+    if (result.type !== "success") {
+      toggleModalOpen();
+      toast({
+        message: "Failed to submit entry",
+        type: "error",
+      });
+    }
+
+    // recover form data
     const formData = new FormData(e.target as HTMLFormElement);
     const payload = Object.fromEntries(formData.entries()) as RecordDetails;
 
-    loading = true;
+    // send transaction
     transactionResult = await contractTransact("addRecord", [
       payload.name,
       payload.description,
+      result.data.ipfsHash,
     ]);
-    loading = false;
 
+    // reset form
     if (transactionResult) {
       toggleModalOpen();
       (e.target as HTMLFormElement).reset();
     }
+
+    loading = false;
   };
 </script>
 
 <Navbar name="Add Record" />
 
-<div class="grid place-content-center pb-10">
-  <div class=" flex flex-col gap-6 max-w-md">
-    <button
-      class="flex items-center gap-2 text-gray-500 hover:opacity-70"
-      on:click={() => goto("/dashboard")}
+<form
+  class="flex flex-col justify-center mb-10 items-center"
+  method="POST"
+  action="?/pinJSON"
+  on:submit={handleAddRecordSubmit}
+>
+  <div class="w-full max-w-5xl mx-auto">
+    <div
+      class="flex lg:flex-row justify-between  max-w-md lg:max-w-none flex-col lg:gap-10 mx-auto"
     >
-      <ArrowLeftLine />
-      Go Back
-    </button>
-    <h1 class="font-extrabold text-5xl">Add New Record</h1>
-    <p>
-      Fill the form below to add a new record and click on add record button.
-    </p>
-    <form on:submit={handleAddRecordSubmit}>
-      <div class="form-control w-full">
-        <label class="label" for="name">Name of the Record</label>
-        <input
-          required
-          name="name"
-          type="text"
-          placeholder="Type here"
-          class="input input-bordered w-full"
-        />
-      </div>
-      <div class="form-control w-full">
-        <label class="label" for="name">Description of the Record</label>
-        <textarea
-          required
-          name="description"
-          placeholder="Type here"
-          class="textarea textarea-bordered w-full"
-        />
-      </div>
-      {#if !loading}
-        <button class="btn btn-primary mt-4 w-full">Add Record</button>
-      {:else}
-        <button class="btn loading btn-primary mt-4 w-full" disabled
-          >Transaction Processing</button
-        >
-      {/if}
-    </form>
+      <RecordDetailsInput />
+      <CustomFields />
+    </div>
   </div>
-</div>
+
+  {#if !loading}
+    <button class="btn btn-primary mt-10 w-full max-w-md mx-auto"
+      >Add Record</button
+    >
+  {:else}
+    <button
+      class="btn loading btn-primary mt-4 w-full max-w-lg mx-auto"
+      disabled>Transaction Processing</button
+    >
+  {/if}
+</form>
 
 <Modal
   open={isModalOpen}
