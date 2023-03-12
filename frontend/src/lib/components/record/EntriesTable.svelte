@@ -165,14 +165,16 @@
               </td>
               {#if $signerAddress === recordMaintainer}
                 <td>
-                  <button
-                    class="btn btn-ghost btn-xs"
-                    on:click={() => {
-                      toggleModalOpenWithEditPrefill(entry);
-                    }}
-                  >
-                    <Edit2Line class="inline-block" size="20" />
-                  </button>
+                  {#if !entry.acknowledged}
+                    <button
+                      class="btn btn-ghost btn-xs"
+                      on:click={() => {
+                        toggleModalOpenWithEditPrefill(entry);
+                      }}
+                    >
+                      <Edit2Line class="inline-block" size="20" />
+                    </button>
+                  {/if}
                 </td>
               {/if}
             </tr>
