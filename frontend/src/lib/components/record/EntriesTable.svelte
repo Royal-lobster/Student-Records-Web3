@@ -1,32 +1,30 @@
 <script lang="ts">
-  import { contractTransact } from "$lib/shared/contract-transact";
   import { shortenAddress } from "$lib/shared/utils";
   import { toast } from "$lib/store/toast";
-  import type { EntriesExpanded } from "$lib/types";
-  import type { ContractReceipt } from "ethers";
+  import type { EntriesExpanded as EntryExpanded } from "$lib/types";
+  import type { BigNumber } from "ethers";
   import { signerAddress } from "svelte-ethers-store";
-  import { AddCircleLine, FileCopyLine } from "svelte-remixicon";
-  import Modal from "../elements/Modal.svelte";
-  import TransactionSummaryTable from "../elements/TransactionSummaryTable.svelte";
+  import { AddCircleLine, Edit2Line, FileCopyLine } from "svelte-remixicon";
+  import SubmitEntry from "./SubmitEntry.svelte";
 
-  export let entries: Array<[string, boolean, string]>;
+  export let entries: Array<[BigNumber, BigNumber, string, boolean, string]>;
   export let recordID: string;
   export let recordMaintainer: string;
   export let tableStructure: { name: string; type: string }[];
 
   // CONVERT ENTRIES TO TABLE DATA =====================
-  let data: EntriesExpanded[] = [];
+  let data: EntryExpanded[] = [];
   $: (async () => {
     data = await Promise.all(
-      entries.map(async ([recipient, acknowledged, ipfsHash]) => {
+      entries.map(async (entry) => {
+        const [, entry_id, recipient, acknowledged, ipfsHash] = entry;
         const ipfsData = await fetch(
           `https://${ipfsHash}.ipfs.w3s.link/data.json`
         ).then((res) => {
           return res.json();
         });
-        console.log(ipfsHash);
-
         return {
+          entry_id,
           recipient,
           acknowledged,
           ...ipfsData,
@@ -36,49 +34,16 @@
   })();
 
   // ADD ENTRIES LOGIC =================================
-  let entrySubmitBtn: HTMLButtonElement;
+  let prefillEntryFormData: EntryExpanded | null = null;
   let isModalOpen = false;
-  let activeStep = 0;
-  let addEntryResponse: ContractReceipt | null = null;
-  let toggleModalOpen = () => (isModalOpen = !isModalOpen);
-
-  let handleEntriesSubmit = async (event: Event) => {
-    activeStep = 1;
-
-    // send ipfsData to IPFS and get the hash
-    const formData = new FormData(event.target as HTMLFormElement);
-    const response = await fetch((event.target as HTMLFormElement).action, {
-      method: "POST",
-      body: formData,
-    });
-    const result = await response.json();
-    if (result.type !== "success") {
-      toggleModalOpen();
-      toast({
-        message: "Failed to submit entry",
-        type: "error",
-      });
-    }
-
-    // send the hash, recipient to the contract
-    const recipientAddr = formData.get("RECIPIENT_ETH_ADDR");
-    const ipfsHash = result.data.ipfsHash;
-
-    addEntryResponse = await contractTransact("addEntry", [
-      recordID,
-      recipientAddr,
-      ipfsHash,
-    ]);
-
-    if (addEntryResponse?.status === 0) {
-      toggleModalOpen();
-      toast({
-        message: "Failed to submit entry",
-        type: "error",
-      });
-    } else if (addEntryResponse) {
-      activeStep = 2;
-    }
+  let entryID: string | null = null;
+  let toggleModalOpen = () => {
+    isModalOpen = !isModalOpen;
+    prefillEntryFormData = null;
+  };
+  let toggleModalOpenWithEditPrefill = (entryData: EntryExpanded) => {
+    isModalOpen = !isModalOpen;
+    prefillEntryFormData = entryData;
   };
 
   // COPY TO CLIPBOARD ===============================
@@ -101,6 +66,9 @@
           <th>{field.name}</th>
         {/each}
         <th>Acknowledged</th>
+        {#if $signerAddress === recordMaintainer}
+          <th />
+        {/if}
       </tr>
     </thead>
     <tbody>
@@ -110,7 +78,7 @@
             <tr>
               <th>{i + 1}</th>
               <td
-                class="flex items-center gap-2 cursor-pointer"
+                class="cursor-pointer"
                 on:keypress={() => copyToClipboard(entry.recipient)}
                 on:click={() => copyToClipboard(entry.recipient)}
               >
@@ -121,12 +89,24 @@
                 <td>{entry[field.name]}</td>
               {/each}
               <td>{entry.acknowledged ? "Yes" : "No"}</td>
+              {#if $signerAddress === recordMaintainer}
+                <td>
+                  <button
+                    class="btn btn-ghost btn-xs"
+                    on:click={() => {
+                      toggleModalOpenWithEditPrefill(entry);
+                    }}
+                  >
+                    <Edit2Line class="inline-block" size="20" />
+                  </button>
+                </td>
+              {/if}
             </tr>
           {/each}
         {:else}
           <tr>
             <td
-              colspan={tableStructure.length + 3}
+              colspan={tableStructure.length + 3 + (recordMaintainer ? 1 : 0)}
               class="text-center h-60 bg-black/5"
             >
               <div class=" flex flex-col justify-center items-center">
@@ -139,7 +119,7 @@
       {:else}
         <tr>
           <td
-            colspan={tableStructure.length + 3}
+            colspan={tableStructure.length + 3 + (recordMaintainer ? 1 : 0)}
             class="text-center h-32 bg-black/5"
           >
             No entries yet
@@ -149,6 +129,7 @@
     </tbody>
   </table>
 </div>
+
 {#if $signerAddress === recordMaintainer}
   <button class="btn gap-2 btn-primary mt-4" on:click={toggleModalOpen}>
     <AddCircleLine class="inline-block" size="20" />
@@ -156,63 +137,10 @@
   >
 {/if}
 
-<Modal
-  open={isModalOpen}
-  on:toggle={toggleModalOpen}
-  title={activeStep === 0
-    ? "Create New Entry"
-    : activeStep === 1
-    ? "Processing Transaction"
-    : "Transaction Successful"}
-  secondaryText={activeStep === 0 ? "Cancel" : undefined}
-  primaryText={activeStep === 0 ? "Add" : activeStep === 2 ? "Yay!" : undefined}
-  primaryAction={activeStep === 0
-    ? () => entrySubmitBtn.click()
-    : activeStep === 2
-    ? () => window.location.reload()
-    : undefined}
->
-  {#if activeStep === 0}
-    <form
-      method="POST"
-      action="?/pinJSON"
-      class="grid grid-cols-1 md:grid-cols-2 gap-4"
-      on:submit|preventDefault={handleEntriesSubmit}
-    >
-      <div class="form-control">
-        <label class="label" for="name">Recipient</label>
-        <input
-          required
-          name="RECIPIENT_ETH_ADDR"
-          pattern="0x[a-fA-F0-9]{`{40}`}"
-          type="text"
-          placeholder="Enter Recipient Address"
-          class="input input-bordered"
-        />
-      </div>
-      {#each tableStructure as field, i}
-        <div class="form-control">
-          <label class="label" for="name">{field.name}</label>
-          <input
-            required
-            name={`${field.name} [${i}]`}
-            type={field.type}
-            placeholder="Enter {field.name}"
-            class="input input-bordered"
-          />
-        </div>
-      {/each}
-      <button type="submit" hidden bind:this={entrySubmitBtn} />
-    </form>
-  {:else if activeStep === 1}
-    <div class="flex flex-col items-center justify-center">
-      <p class="text-neutral/700 text-center">
-        Please wait while we process your transaction. We send the data to IPFS
-        and then send the hash to the contract. This may take a few seconds.
-      </p>
-      <progress class="progress w-56 mt-6" />
-    </div>
-  {:else if activeStep === 2}
-    <TransactionSummaryTable transactionResult={addEntryResponse} />
-  {/if}
-</Modal>
+<SubmitEntry
+  {isModalOpen}
+  {toggleModalOpen}
+  {tableStructure}
+  {recordID}
+  {prefillEntryFormData}
+/>

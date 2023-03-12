@@ -24,8 +24,8 @@ export const web3authModalOpen = writable(false);
 
 export const connect = async () => {
   const auth = await web3auth();
-  web3authStore.set(auth);
 
+  web3authStore.set(auth);
   web3authModalOpen.set(true);
   await auth.initModal();
   web3authModalOpen.set(false);

@@ -66,15 +66,14 @@
     {:else}
       <h1 class="font-extrabold text-5xl">Connect to the Application</h1>
       <p>
-        Click on the button below to connet to the application. You can login
+        Click on the button below to connect to the application. You can login
         with any of your social media account or with your wallet.
       </p>
-
       {#if !$web3authModalOpen}
         <button class="btn gap-2" on:click={connect}>Connect</button>
       {:else}
         <button class="btn loading gap-2" disabled on:click={connect}
-          >Connect initating</button
+          >Connect initiating</button
         >
       {/if}
     {/if}
