@@ -39,7 +39,12 @@
 
     addEntryResponse = await contractTransact(
       prefillEntryFormData ? "updateEntry" : "addEntry",
-      [recordID, recipientAddr, ipfsHash]
+      [
+        recordID,
+        ...(prefillEntryFormData ? [prefillEntryFormData.entry_id] : []),
+        recipientAddr,
+        ipfsHash,
+      ]
     );
 
     if (addEntryResponse?.status === 0) {

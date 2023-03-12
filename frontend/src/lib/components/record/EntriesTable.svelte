@@ -2,11 +2,12 @@
   import { shortenAddress } from "$lib/shared/utils";
   import { toast } from "$lib/store/toast";
   import type { EntriesExpanded as EntryExpanded } from "$lib/types";
+  import type { BigNumber } from "ethers";
   import { signerAddress } from "svelte-ethers-store";
   import { AddCircleLine, Edit2Line, FileCopyLine } from "svelte-remixicon";
   import SubmitEntry from "./SubmitEntry.svelte";
 
-  export let entries: Array<[string, boolean, string]>;
+  export let entries: Array<[BigNumber, BigNumber, string, boolean, string]>;
   export let recordID: string;
   export let recordMaintainer: string;
   export let tableStructure: { name: string; type: string }[];
@@ -15,13 +16,15 @@
   let data: EntryExpanded[] = [];
   $: (async () => {
     data = await Promise.all(
-      entries.map(async ([recipient, acknowledged, ipfsHash]) => {
+      entries.map(async (entry) => {
+        const [, entry_id, recipient, acknowledged, ipfsHash] = entry;
         const ipfsData = await fetch(
           `https://${ipfsHash}.ipfs.w3s.link/data.json`
         ).then((res) => {
           return res.json();
         });
         return {
+          entry_id,
           recipient,
           acknowledged,
           ...ipfsData,
@@ -31,13 +34,14 @@
   })();
 
   // ADD ENTRIES LOGIC =================================
-  let prefillEntryFormData: Record<string, string> | null = null;
+  let prefillEntryFormData: EntryExpanded | null = null;
   let isModalOpen = false;
+  let entryID: string | null = null;
   let toggleModalOpen = () => {
     isModalOpen = !isModalOpen;
     prefillEntryFormData = null;
   };
-  let toggleModalOpenWithEditPrefill = (entryData: Record<string, string>) => {
+  let toggleModalOpenWithEditPrefill = (entryData: EntryExpanded) => {
     isModalOpen = !isModalOpen;
     prefillEntryFormData = entryData;
   };
@@ -102,7 +106,7 @@
         {:else}
           <tr>
             <td
-              colspan={tableStructure.length + 3}
+              colspan={tableStructure.length + 3 + (recordMaintainer ? 1 : 0)}
               class="text-center h-60 bg-black/5"
             >
               <div class=" flex flex-col justify-center items-center">
@@ -125,6 +129,7 @@
     </tbody>
   </table>
 </div>
+
 {#if $signerAddress === recordMaintainer}
   <button class="btn gap-2 btn-primary mt-4" on:click={toggleModalOpen}>
     <AddCircleLine class="inline-block" size="20" />

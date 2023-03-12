@@ -21,6 +21,7 @@ export type Entries = {
 };
 
 export type EntriesExpanded = Record<string, string> & {
+  entry_id: string;
   recipient: string;
   acknowledged: boolean;
 };
