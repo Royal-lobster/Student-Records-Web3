@@ -135,7 +135,7 @@
               {#each tableStructure as field}
                 <td>{entry[field.name]}</td>
               {/each}
-              <td>
+              <td class="flex">
                 {#if $signerAddress === entry.recipient}
                   <button
                     disabled={isAcknowledging}
@@ -144,7 +144,7 @@
                         entry.entry_id.toString(),
                         entry.acknowledged
                       )}
-                    class={`btn flex gap-1 btn-xs ${
+                    class={`btn flex flex-shrink-0 gap-1 btn-xs ${
                       isAcknowledging ? "btn-disabled" : "btn-primary"
                     } ${entry.acknowledged ? "btn-error" : "btn-primary"}`}
                   >
