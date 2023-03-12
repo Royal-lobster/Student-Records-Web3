@@ -1,10 +1,20 @@
 <script lang="ts">
+  import { contractTransact } from "$lib/shared/contract-transact";
   import { shortenAddress } from "$lib/shared/utils";
   import { toast } from "$lib/store/toast";
   import type { EntriesExpanded as EntryExpanded } from "$lib/types";
-  import type { BigNumber } from "ethers";
+  import type { BigNumber, ContractReceipt } from "ethers";
   import { signerAddress } from "svelte-ethers-store";
-  import { AddCircleLine, Edit2Line, FileCopyLine } from "svelte-remixicon";
+  import {
+    AddCircleLine,
+    CheckDoubleFill,
+    CloseCircleLine,
+    Edit2Line,
+    FileCopyLine,
+    Loader4Fill,
+  } from "svelte-remixicon";
+  import Modal from "../elements/Modal.svelte";
+  import TransactionSummaryTable from "../elements/TransactionSummaryTable.svelte";
   import SubmitEntry from "./SubmitEntry.svelte";
 
   export let entries: Array<[BigNumber, BigNumber, string, boolean, string]>;
@@ -36,7 +46,6 @@
   // ADD ENTRIES LOGIC =================================
   let prefillEntryFormData: EntryExpanded | null = null;
   let isModalOpen = false;
-  let entryID: string | null = null;
   let toggleModalOpen = () => {
     isModalOpen = !isModalOpen;
     prefillEntryFormData = null;
@@ -44,6 +53,39 @@
   let toggleModalOpenWithEditPrefill = (entryData: EntryExpanded) => {
     isModalOpen = !isModalOpen;
     prefillEntryFormData = entryData;
+  };
+  let isAckModalOpen: boolean;
+  let toggleAckModalOpen: () => void;
+  let acknowledgeResponse: ContractReceipt | null = null;
+  let isAcknowledging = false;
+  let handleAcknowledgement = async (
+    entry_id: string,
+    acknowledged: boolean
+  ) => {
+    isAcknowledging = true;
+    acknowledgeResponse = await contractTransact(
+      acknowledged ? "unAcknowledgeEntry" : "acknowledgeEntry",
+      [recordID, entry_id]
+    );
+    isAcknowledging = false;
+    if (acknowledgeResponse?.status === 0) {
+      toggleModalOpen();
+      toast({
+        message: "Failed to submit entry",
+        type: "error",
+      });
+    } else {
+      toast({
+        message: `Successfully ${
+          acknowledged ? "un-acknowledged" : "acknowledged"
+        } entry`,
+        type: "success",
+      });
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
   };
 
   // COPY TO CLIPBOARD ===============================
@@ -78,17 +120,49 @@
             <tr>
               <th>{i + 1}</th>
               <td
-                class="cursor-pointer"
+                class={$signerAddress === entry.recipient
+                  ? "text-primary font-bold cursor-pointer"
+                  : "cursor-pointer"}
                 on:keypress={() => copyToClipboard(entry.recipient)}
                 on:click={() => copyToClipboard(entry.recipient)}
               >
                 <FileCopyLine class="inline-block" />
-                {shortenAddress(entry.recipient)}</td
-              >
+                {shortenAddress(entry.recipient)}
+                {#if $signerAddress === entry.recipient}
+                  <span class="text-primary font-bold"> (You)</span>
+                {/if}
+              </td>
               {#each tableStructure as field}
                 <td>{entry[field.name]}</td>
               {/each}
-              <td>{entry.acknowledged ? "Yes" : "No"}</td>
+              <td>
+                {#if $signerAddress === entry.recipient}
+                  <button
+                    disabled={isAcknowledging}
+                    on:click={() =>
+                      handleAcknowledgement(
+                        entry.entry_id.toString(),
+                        entry.acknowledged
+                      )}
+                    class={`btn flex gap-1 btn-xs ${
+                      isAcknowledging ? "btn-disabled" : "btn-primary"
+                    } ${entry.acknowledged ? "btn-error" : "btn-primary"}`}
+                  >
+                    {#if isAcknowledging}
+                      <Loader4Fill class="animate-spin" size="15" />
+                      <span>Processing</span>
+                    {:else if entry.acknowledged}
+                      <CloseCircleLine />
+                      <span>UnAcknowledge</span>
+                    {:else}
+                      <CheckDoubleFill />
+                      <span>Acknowledge</span>
+                    {/if}
+                  </button>
+                {:else}
+                  {entry.acknowledged ? "Yes" : "No"}
+                {/if}
+              </td>
               {#if $signerAddress === recordMaintainer}
                 <td>
                   <button
@@ -144,3 +218,13 @@
   {recordID}
   {prefillEntryFormData}
 />
+
+<Modal
+  open={isAckModalOpen}
+  on:toggle={toggleAckModalOpen}
+  title="Acknowledge Entry"
+  primaryText="Yay!"
+  primaryAction={toggleModalOpen}
+>
+  <TransactionSummaryTable transactionResult={acknowledgeResponse} />
+</Modal>
