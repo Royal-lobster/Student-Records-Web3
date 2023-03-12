@@ -408,4 +408,18 @@ describe("Records Contract", function () {
       )
     ).to.be.revertedWith("Entry already acknowledged.");
   });
+
+  it("Should be able to add multiple entries to a record", async function () {
+    const { DeployedRecordsContract, recordId, addr1, addr2, addr3 } =
+      await add0thRecordFixture();
+    await (
+      await DeployedRecordsContract.addMultipleEntries(
+        recordId,
+        [addr1.address, addr2.address, addr3.address],
+        ["SOME_IPFS_HASH", "SOME_OTHER_IPFS_HASH", "SOME_THIRD_IPFS_HASH"]
+      )
+    ).wait();
+    const recordReadTx = await DeployedRecordsContract.getEntryCount(recordId);
+    expect(recordReadTx).to.equal(3);
+  });
 });

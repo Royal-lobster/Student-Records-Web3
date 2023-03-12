@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity >=0.7.3;
+import "hardhat/console.sol";
 
 contract Records {
     struct Record {
-        uint256 id;
+        uint id;
         string name;
         string description;
         address maintainer;
@@ -12,6 +13,8 @@ contract Records {
     }
 
     struct Entry {
+        uint record_id;
+        uint entry_id;
         address recipient;
         bool acknowledged;
         string ipfs_data;
@@ -77,6 +80,8 @@ contract Records {
         );
         _entries[_recordId].push(
             Entry({
+                record_id: _recordId,
+                entry_id: _entries[_recordId].length,
                 recipient: _recipient,
                 acknowledged: false,
                 ipfs_data: _ipfs_data
@@ -89,6 +94,39 @@ contract Records {
             false,
             _ipfs_data
         );
+    }
+
+    function addMultipleEntries(
+        uint _recordId,
+        address[] memory _recipients,
+        string[] memory _ipfs_data
+    ) public {
+        require(
+            _records[_recordId].maintainer == msg.sender,
+            "Only the maintainer can add entries to a record."
+        );
+        require(
+            _recipients.length == _ipfs_data.length,
+            "The number of recipients and the number of ipfs data must be the same."
+        );
+        for (uint i = 0; i < _recipients.length; i++) {
+            _entries[_recordId].push(
+                Entry({
+                    record_id: _recordId,
+                    entry_id: _entries[_recordId].length,
+                    recipient: _recipients[i],
+                    acknowledged: false,
+                    ipfs_data: _ipfs_data[i]
+                })
+            );
+            emit EntryAdded(
+                _recordId,
+                _entries[_recordId].length - 1,
+                _recipients[i],
+                false,
+                _ipfs_data[i]
+            );
+        }
     }
 
     /*
