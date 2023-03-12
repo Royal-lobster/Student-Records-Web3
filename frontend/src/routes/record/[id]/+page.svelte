@@ -20,27 +20,29 @@
 
 <Navbar name="Record Details" />
 
-{#if $contracts.recordsContract}
-  {#await $contracts.recordsContract.getRecord($page.params.id)}
-    <SkeletonRecordPageHeader />
-  {:then record}
-    <RecordPageHeader {record} />
-    {#await $contracts.recordsContract.getEntries(record.id)}
-      <SkeletonEntriesTable />
-    {:then entries}
-      {#await getTableStructure(record.ipfs_structure)}
+<div class="pb-8">
+  {#if $contracts.recordsContract}
+    {#await $contracts.recordsContract.getRecord($page.params.id)}
+      <SkeletonRecordPageHeader />
+    {:then record}
+      <RecordPageHeader {record} />
+      {#await $contracts.recordsContract.getEntries(record.id)}
         <SkeletonEntriesTable />
-      {:then tableStructure}
-        <EntriesTable
-          {entries}
-          recordID={record.id}
-          recordMaintainer={record.maintainer}
-          {tableStructure}
-        />
+      {:then entries}
+        {#await getTableStructure(record.ipfs_structure)}
+          <SkeletonEntriesTable />
+        {:then tableStructure}
+          <EntriesTable
+            {entries}
+            recordID={record.id}
+            recordMaintainer={record.maintainer}
+            {tableStructure}
+          />
+        {/await}
       {/await}
     {/await}
-  {/await}
-{:else}
-  <SkeletonRecordPageHeader />
-  <SkeletonEntriesTable />
-{/if}
+  {:else}
+    <SkeletonRecordPageHeader />
+    <SkeletonEntriesTable />
+  {/if}
+</div>
