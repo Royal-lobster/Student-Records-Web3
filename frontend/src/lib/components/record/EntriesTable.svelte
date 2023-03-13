@@ -78,6 +78,7 @@
       recordID,
       entry_id,
     ]);
+    entries = entries.filter((entry) => entry[1].toString() !== entry_id);
     deletingEntry = false;
   };
 
@@ -105,9 +106,13 @@
         type: "success",
       });
 
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      // Update the acknowledged status of the entry
+      entries = entries.map((entry) => {
+        if (entry[1].toString() === entry_id) {
+          entry[3] = !acknowledged;
+        }
+        return entry;
+      });
     }
   };
 

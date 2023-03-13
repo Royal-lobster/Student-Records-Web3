@@ -18,6 +18,13 @@
     const result = await response.json();
     return result as { name: string; type: string }[];
   };
+
+  const filterEntries = (entries: any) => {
+    console.log(entries);
+    return entries.filter((entry: any) => {
+      return !!entry[4];
+    });
+  };
 </script>
 
 <Navbar name="Record Details" />
@@ -35,7 +42,7 @@
           <SkeletonEntriesTable />
         {:then tableStructure}
           <EntriesTable
-            {entries}
+            entries={filterEntries(entries)}
             recordID={record.id}
             recordMaintainer={record.maintainer}
             {tableStructure}
