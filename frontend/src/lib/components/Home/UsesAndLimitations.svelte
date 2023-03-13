@@ -16,7 +16,7 @@
           </div>
           <div class="flex-grow">
             <h2 class="text-white text-2xl title-font font-medium mb-3">
-              Advantages the project
+              Advantages of the project
             </h2>
             <ul class="list-disc list-inside">
               <li class="mb-2">

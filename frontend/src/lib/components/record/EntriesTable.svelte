@@ -135,30 +135,32 @@
               {#each tableStructure as field}
                 <td>{entry[field.name]}</td>
               {/each}
-              <td class="flex">
+              <td>
                 {#if $signerAddress === entry.recipient}
-                  <button
-                    disabled={isAcknowledging}
-                    on:click={() =>
-                      handleAcknowledgement(
-                        entry.entry_id.toString(),
-                        entry.acknowledged
-                      )}
-                    class={`btn flex flex-shrink-0 gap-1 btn-xs ${
-                      isAcknowledging ? "btn-disabled" : "btn-primary"
-                    } ${entry.acknowledged ? "btn-error" : "btn-primary"}`}
-                  >
-                    {#if isAcknowledging}
-                      <Loader4Fill class="animate-spin" size="15" />
-                      <span>Processing</span>
-                    {:else if entry.acknowledged}
-                      <CloseCircleLine />
-                      <span>UnAcknowledge</span>
-                    {:else}
-                      <CheckDoubleFill />
-                      <span>Acknowledge</span>
-                    {/if}
-                  </button>
+                  <div class="flex">
+                    <button
+                      disabled={isAcknowledging}
+                      on:click={() =>
+                        handleAcknowledgement(
+                          entry.entry_id.toString(),
+                          entry.acknowledged
+                        )}
+                      class={`btn flex flex-shrink-0 gap-1 btn-xs ${
+                        isAcknowledging ? "btn-disabled" : "btn-primary"
+                      } ${entry.acknowledged ? "btn-error" : "btn-primary"}`}
+                    >
+                      {#if isAcknowledging}
+                        <Loader4Fill class="animate-spin" size="15" />
+                        <span>Processing</span>
+                      {:else if entry.acknowledged}
+                        <CloseCircleLine />
+                        <span>UnAcknowledge</span>
+                      {:else}
+                        <CheckDoubleFill />
+                        <span>Acknowledge</span>
+                      {/if}
+                    </button>
+                  </div>
                 {:else}
                   {entry.acknowledged ? "Yes" : "No"}
                 {/if}
