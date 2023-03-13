@@ -103,7 +103,7 @@
     </ul>
   </div>
 
-  <input type="file" accept=".csv" bind:files class="block file-input" />
+  <input type="file" accept=".csv" bind:files class="block file-input " />
 </div>
 <Modal
   open={isModalOpen}

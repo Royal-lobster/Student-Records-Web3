@@ -31,7 +31,6 @@
       {#await $contracts.recordsContract.getEntries(record.id)}
         <SkeletonEntriesTable />
       {:then entries}
-        {console.log(entries)}
         {#await getTableStructure(record.ipfs_structure)}
           <SkeletonEntriesTable />
         {:then tableStructure}
