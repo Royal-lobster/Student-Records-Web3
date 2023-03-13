@@ -14,7 +14,9 @@
   let data: Record<string, string>[];
   let activeStep = 0;
   let isModalOpen = false;
-  let toggleModalOpen = () => (isModalOpen = !isModalOpen);
+  let toggleModalOpen = () => {
+    isModalOpen = !isModalOpen;
+  };
   let entrySubmitBtn: HTMLButtonElement;
 
   $: if (files) {
@@ -96,7 +98,7 @@
       {#each tableStructure as { name }}
         <li>
           {`${name} ${
-            name === "recipient" && "(should contain valid eth addresses)"
+            name === "recipient" ? "(should contain valid eth addresses)" : ""
           }`}
         </li>
       {/each}

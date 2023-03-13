@@ -63,7 +63,9 @@
   open={isModalOpen}
   on:toggle={toggleModalOpen}
   title={activeStep === 0
-    ? "Create New Entry"
+    ? prefillEntryFormData
+      ? "Update Entry"
+      : "Add Entry"
     : activeStep === 1
     ? "Processing Transaction"
     : "Transaction Successful"}
@@ -88,7 +90,6 @@
           required
           name="RECIPIENT_ETH_ADDR"
           value={prefillEntryFormData?.recipient || ""}
-          readonly={prefillEntryFormData?.recipient !== undefined}
           pattern="0x[a-fA-F0-9]{`{40}`}"
           type="text"
           placeholder="Enter Recipient Address"
