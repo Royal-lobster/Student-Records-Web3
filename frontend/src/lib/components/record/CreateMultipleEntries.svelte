@@ -88,7 +88,7 @@
   class="flex flex-col md:flex-row justify-between gap-4 items-center max-w-4xl mt-8 border-t border-black/20 p-4"
 >
   <div>
-    <h3 class="text-2xl font-bold mb-4 text-primary">Upload CSV</h3>
+    <h3 class="text-2xl font-bold my-4 text-primary">Upload CSV</h3>
     <p class="text-neutral/700">
       Please upload a CSV file with the following header columns:
     </p>
@@ -103,7 +103,12 @@
     </ul>
   </div>
 
-  <input type="file" accept=".csv" bind:files class="block file-input " />
+  <input
+    type="file"
+    accept=".csv"
+    bind:files
+    class="block file-input file-input-bordered "
+  />
 </div>
 <Modal
   open={isModalOpen}
