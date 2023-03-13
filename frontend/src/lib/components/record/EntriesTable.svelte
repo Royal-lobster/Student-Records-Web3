@@ -9,6 +9,7 @@
     AddCircleLine,
     CheckDoubleFill,
     CloseCircleLine,
+    DeleteBin2Line,
     Edit2Line,
     FileCopyLine,
     Loader4Fill,
@@ -58,6 +59,28 @@
   let toggleAckModalOpen: () => void;
   let acknowledgeResponse: ContractReceipt | null = null;
   let isAcknowledging = false;
+  let isDeleteModalOpen = false;
+  let deletingEntry = false;
+  let deleteResponse: ContractReceipt | null = null;
+  let entryToDelete: string | null = null;
+
+  function toggleDeleteModal() {
+    isDeleteModalOpen = !isDeleteModalOpen;
+  }
+  function handleDeleteEntryClick(entry_id: string) {
+    entryToDelete = entry_id;
+    toggleDeleteModal();
+  }
+
+  const handleDeleteEntry = async (entry_id: string) => {
+    deletingEntry = true;
+    deleteResponse = await contractTransact("deleteEntry", [
+      recordID,
+      entry_id,
+    ]);
+    deletingEntry = false;
+  };
+
   let handleAcknowledgement = async (
     entry_id: string,
     acknowledged: boolean
@@ -168,14 +191,24 @@
               {#if $signerAddress === recordMaintainer}
                 <td>
                   {#if !entry.acknowledged}
-                    <button
-                      class="btn btn-ghost btn-xs"
-                      on:click={() => {
-                        toggleModalOpenWithEditPrefill(entry);
-                      }}
-                    >
-                      <Edit2Line class="inline-block" size="20" />
-                    </button>
+                    <div class="btn-group">
+                      <button
+                        class="btn btn-accent btn-xs"
+                        on:click={() => {
+                          toggleModalOpenWithEditPrefill(entry);
+                        }}
+                      >
+                        <Edit2Line class="inline-block" size="15" />
+                      </button>
+                      <button
+                        class="btn btn-error btn-xs"
+                        on:click={() => {
+                          handleDeleteEntryClick(entry.entry_id.toString());
+                        }}
+                      >
+                        <DeleteBin2Line class="inline-block" size="15" />
+                      </button>
+                    </div>
                   {/if}
                 </td>
               {/if}
@@ -231,4 +264,24 @@
   primaryAction={toggleModalOpen}
 >
   <TransactionSummaryTable transactionResult={acknowledgeResponse} />
+</Modal>
+
+<Modal
+  open={isDeleteModalOpen}
+  on:toggle={toggleDeleteModal}
+  title="Delete Entry"
+  primaryText={deleteResponse ? undefined : "Delete"}
+  primaryAction={deleteResponse
+    ? undefined
+    : () => entryToDelete && handleDeleteEntry(entryToDelete)}
+  secondaryText={deleteResponse ? "Yay !" : "Cancel"}
+  loading={deletingEntry}
+  emotion="error"
+>
+  {#if deleteResponse}
+    <p class="mb-5">Record deleted successfully</p>
+    <TransactionSummaryTable transactionResult={deleteResponse} />
+  {:else}
+    <p>Are you sure you want to delete this entry?</p>
+  {/if}
 </Modal>
