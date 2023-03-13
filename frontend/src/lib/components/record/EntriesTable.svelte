@@ -2,8 +2,8 @@
   import { contractTransact } from "$lib/shared/contract-transact";
   import { shortenAddress } from "$lib/shared/utils";
   import { toast } from "$lib/store/toast";
-  import type { EntriesExpanded as EntryExpanded } from "$lib/types";
-  import type { BigNumber, ContractReceipt } from "ethers";
+  import type { Entry, EntryExpanded as EntryExpanded } from "$lib/types";
+  import type { ContractReceipt } from "ethers";
   import { signerAddress } from "svelte-ethers-store";
   import {
     AddCircleLine,
@@ -18,7 +18,7 @@
   import TransactionSummaryTable from "../elements/TransactionSummaryTable.svelte";
   import SubmitEntry from "./SubmitEntry.svelte";
 
-  export let entries: Array<[BigNumber, BigNumber, string, boolean, string]>;
+  export let entries: Entry[];
   export let recordID: string;
   export let recordMaintainer: string;
   export let tableStructure: { name: string; type: string }[];
@@ -28,7 +28,7 @@
   $: (async () => {
     data = await Promise.all(
       entries.map(async (entry) => {
-        const [, entry_id, recipient, acknowledged, ipfsHash] = entry;
+        const { entry_id, recipient, acknowledged, ipfsHash } = entry;
         const ipfsData = await fetch(
           `https://${ipfsHash}.ipfs.w3s.link/data.json`
         ).then((res) => {
@@ -78,7 +78,20 @@
       recordID,
       entry_id,
     ]);
-    entries = entries.filter((entry) => entry[1].toString() !== entry_id);
+    if (deleteResponse?.status === 0) {
+      toggleDeleteModal();
+      toast({
+        message: "Failed to delete entry",
+        type: "error",
+      });
+    } else {
+      toast({
+        message: "Successfully deleted entry",
+        type: "success",
+      });
+    }
+
+    entries = entries.filter((entry) => entry.entry_id !== entry_id);
     deletingEntry = false;
   };
 
@@ -106,10 +119,12 @@
         type: "success",
       });
 
-      // Update the acknowledged status of the entry
       entries = entries.map((entry) => {
-        if (entry[1].toString() === entry_id) {
-          entry[3] = !acknowledged;
+        if (entry.entry_id === entry_id) {
+          return {
+            ...entry,
+            acknowledged: !acknowledged,
+          };
         }
         return entry;
       });

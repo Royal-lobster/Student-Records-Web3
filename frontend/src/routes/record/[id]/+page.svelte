@@ -8,6 +8,7 @@
   import SkeletonRecordPageHeader from "$lib/components/skeletons/SkeletonRecordPageHeader.svelte";
   import { contracts } from "svelte-ethers-store";
   import { signerAddress } from "svelte-ethers-store";
+  import type { Entry } from "$lib/types";
 
   // GET IPFS DATA ====================================
 
@@ -19,11 +20,23 @@
     return result as { name: string; type: string }[];
   };
 
-  const filterEntries = (entries: any) => {
+  const formatEntries = (entries: any) => {
     console.log(entries);
-    return entries.filter((entry: any) => {
+
+    const filteredEntries = entries.filter((entry: any) => {
       return !!entry[4];
     });
+    const formattedEntries = filteredEntries.map((entry: any) => {
+      return {
+        record_id: entry[0].toString(),
+        entry_id: entry[1].toString(),
+        recipient: entry[2],
+        acknowledged: entry[3],
+        ipfsHash: entry[4],
+      };
+    });
+
+    return formattedEntries as Entry[];
   };
 </script>
 
@@ -42,7 +55,7 @@
           <SkeletonEntriesTable />
         {:then tableStructure}
           <EntriesTable
-            entries={filterEntries(entries)}
+            entries={formatEntries(entries)}
             recordID={record.id}
             recordMaintainer={record.maintainer}
             {tableStructure}

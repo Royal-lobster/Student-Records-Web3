@@ -14,14 +14,12 @@ export type RecordDetailsFull = {
   ipfs_structure: string;
 };
 
-export type Entries = {
-  recipient: string;
-  ipfsHash: string;
-  acknowledged: boolean;
-};
-
-export type EntriesExpanded = Record<string, string> & {
+export type Entry = {
+  record_id: string;
   entry_id: string;
   recipient: string;
   acknowledged: boolean;
+  ipfsHash: string;
 };
+
+export type EntryExpanded = Record<string, string> & Entry;
