@@ -16,9 +16,8 @@ export const actions: Actions = {
       Object.entries(dataObj)
         .filter(([key]) => !["RECIPIENT_ETH_ADDR"].includes(key))
         .map(([key, value]) => [key.replace(/ \[\d+\]$/, ""), value])
-    );
+    ) as Record<string, string>;
 
-    console.log(ipfsData);
     const cid = await uploadToIPFS(ipfsData);
     return { ipfsHash: cid };
   },

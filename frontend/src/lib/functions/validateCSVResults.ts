@@ -4,7 +4,6 @@ export const isCSVResultValid = (
   result: Record<string, string>[],
   tableStructure: { name: string; type: string }[]
 ) => {
-  console.log(result);
   // check if results have a column full of eth addresses
   const ethAddrRegex = /^0x[a-fA-F0-9]{40}$/;
 
@@ -14,8 +13,6 @@ export const isCSVResultValid = (
   );
 
   if (!recipientColumnExists) {
-    console.log(result.map((row) => Object.keys(row)));
-    console.log(result.every((row) => Object.keys(row).includes("recipient")));
     if (!result.every((row) => Object.keys(row).includes("recipient"))) {
       toast({
         message: "column 'recipient' does not exist",
@@ -80,7 +77,6 @@ export const isCSVResultValid = (
         return emailRegex.test(value);
       } else {
         nonMatches.push(column);
-        console.log(value, columnType, column);
         return false;
       }
     });

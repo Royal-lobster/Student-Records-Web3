@@ -30,8 +30,6 @@
     );
     if (records.length === 0) records = null;
   };
-
-  console.log(records);
 </script>
 
 <Navbar name="Your Records" showAddRecord />

@@ -1,10 +1,5 @@
 <script>
-  import {
-    ArrowRightLine,
-    CheckDoubleFill,
-    Dashboard3Line,
-    Eye2Line,
-  } from "svelte-remixicon";
+  import { CheckDoubleFill, Dashboard3Line, Eye2Line } from "svelte-remixicon";
 </script>
 
 <section class="text-gray-900 body-font">

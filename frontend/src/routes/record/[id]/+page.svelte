@@ -21,8 +21,6 @@
   };
 
   const formatEntries = (entries: any) => {
-    console.log(entries);
-
     const filteredEntries = entries.filter((entry: any) => {
       return !!entry[4];
     });
