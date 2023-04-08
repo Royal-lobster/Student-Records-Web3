@@ -9,6 +9,7 @@
   import { contracts } from "svelte-ethers-store";
   import { signerAddress } from "svelte-ethers-store";
   import type { Entry } from "$lib/types";
+  export const ssr = false;
 
   // GET IPFS DATA ====================================
 
