@@ -5,7 +5,6 @@
   import type { ContractReceipt } from "ethers";
   import { contractTransact } from "$lib/shared/contract-transact";
   import TransactionSummaryTable from "$lib/components/elements/TransactionSummaryTable.svelte";
-  import { goto } from "$app/navigation";
   import { getRecordId } from "$lib/shared/utils";
   import Navbar from "$lib/components/layout/Navbar.svelte";
   import { toast } from "$lib/store/toast";
@@ -80,7 +79,7 @@
 >
   <div class="w-full max-w-5xl mx-auto">
     <div
-      class="flex lg:flex-row justify-between  max-w-md lg:max-w-none flex-col lg:gap-10 mx-auto"
+      class="flex lg:flex-row justify-between max-w-md lg:max-w-none flex-col lg:gap-10 mx-auto"
     >
       <RecordDetailsInput />
       <CustomFields />
@@ -106,7 +105,9 @@
   secondaryText="Close"
   primaryText="View Record"
   primaryAction={() =>
-    goto(transactionResult ? `/record/${getRecordId(transactionResult)}` : "/")}
+    (window.location.href = transactionResult
+      ? `/record/${getRecordId(transactionResult)}`
+      : "/")}
 >
   <TransactionSummaryTable
     {transactionResult}
