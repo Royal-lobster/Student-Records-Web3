@@ -1,6 +1,6 @@
 <script lang="ts">
   import { contractTransact } from "$lib/shared/contract-transact";
-  import { shortenAddress } from "$lib/shared/utils";
+  import { errorSafeFetch, shortenAddress } from "$lib/shared/utils";
   import { toast } from "$lib/store/toast";
   import type { Entry, EntryExpanded as EntryExpanded } from "$lib/types";
   import type { ContractReceipt } from "ethers";
@@ -29,10 +29,10 @@
     data = await Promise.all(
       entries.map(async (entry) => {
         const { entry_id, recipient, acknowledged, ipfsHash } = entry;
-        const ipfsData = await fetch(
+        const ipfsData = await errorSafeFetch(
           `https://${ipfsHash}.ipfs.w3s.link/data.json`
         ).then((res) => {
-          return res.json();
+          return res?.json();
         });
         return {
           entry_id,

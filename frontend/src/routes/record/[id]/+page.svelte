@@ -9,15 +9,16 @@
   import { contracts } from "svelte-ethers-store";
   import { signerAddress } from "svelte-ethers-store";
   import type { Entry } from "$lib/types";
+  import { errorSafeFetch } from "$lib/shared/utils";
   export const ssr = false;
 
   // GET IPFS DATA ====================================
 
   const getTableStructure = async (ipfs_structure: string) => {
-    const response = await fetch(
+    const response = await errorSafeFetch(
       `https://${ipfs_structure}.ipfs.w3s.link/data.json`
     );
-    const result = await response.json();
+    const result = await response?.json();
     return result as { name: string; type: string }[];
   };
 

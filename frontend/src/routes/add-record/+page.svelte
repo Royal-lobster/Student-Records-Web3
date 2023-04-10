@@ -5,7 +5,7 @@
   import type { ContractReceipt } from "ethers";
   import { contractTransact } from "$lib/shared/contract-transact";
   import TransactionSummaryTable from "$lib/components/elements/TransactionSummaryTable.svelte";
-  import { getRecordId } from "$lib/shared/utils";
+  import { errorSafeFetch, getRecordId } from "$lib/shared/utils";
   import Navbar from "$lib/components/layout/Navbar.svelte";
   import { toast } from "$lib/store/toast";
   import { customFieldsStore } from "$lib/store/customFields";
@@ -34,11 +34,14 @@
     const customFieldsFormData = new FormData();
     customFieldsFormData.append("data", JSON.stringify(filteredCustomFields));
 
-    const response = await fetch((e.target as HTMLFormElement).action, {
-      method: "POST",
-      body: customFieldsFormData,
-    });
-    const result = await response.json();
+    const response = await errorSafeFetch(
+      (e.target as HTMLFormElement).action,
+      {
+        method: "POST",
+        body: customFieldsFormData,
+      }
+    );
+    const result = await response?.json();
 
     if (result.type !== "success") {
       toggleModalOpen();

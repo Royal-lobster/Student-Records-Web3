@@ -6,6 +6,7 @@
   import { parse } from "papaparse";
   import Modal from "../elements/Modal.svelte";
   import TransactionSummaryTable from "../elements/TransactionSummaryTable.svelte";
+  import { errorSafeFetch } from "$lib/shared/utils";
 
   export let tableStructure: { name: string; type: string }[];
   export let recordID: string;
@@ -48,11 +49,14 @@
             formData.append(key, value);
           }
         });
-        const response = await fetch((event.target as HTMLFormElement).action, {
-          method: "POST",
-          body: formData,
-        });
-        const result = await response.json();
+        const response = await errorSafeFetch(
+          (event.target as HTMLFormElement).action,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+        const result = await response?.json();
         if (result.type !== "success") {
           toggleModalOpen();
           toast({
@@ -109,7 +113,7 @@
     type="file"
     accept=".csv"
     bind:files
-    class="block file-input file-input-bordered "
+    class="block file-input file-input-bordered"
   />
 </div>
 <Modal

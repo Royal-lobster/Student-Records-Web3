@@ -4,6 +4,7 @@
   import type { ContractReceipt } from "ethers";
   import Modal from "../elements/Modal.svelte";
   import TransactionSummaryTable from "../elements/TransactionSummaryTable.svelte";
+  import { errorSafeFetch } from "$lib/shared/utils";
 
   export let tableStructure: { name: string; type: string }[];
   export let recordID: string;
@@ -20,11 +21,14 @@
 
     // send ipfsData to IPFS and get the hash
     const formData = new FormData(event.target as HTMLFormElement);
-    const response = await fetch((event.target as HTMLFormElement).action, {
-      method: "POST",
-      body: formData,
-    });
-    const result = await response.json();
+    const response = await errorSafeFetch(
+      (event.target as HTMLFormElement).action,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+    const result = await response?.json();
     if (result.type !== "success") {
       toggleModalOpen();
       toast({
